@@ -11,7 +11,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <img src="/images/bvisible-logo.png" alt="bVisible logo" className="w-6 h-6 object-contain" />
+              <img src="/images/bvisible-logo.png" alt="bVisible logo" className="h-9 w-9 object-contain" />
               <span className="font-bold tracking-tight text-base leading-none text-[#0F0F10]">
                 b<span className="text-lg">V</span>isible
               </span>
@@ -171,7 +171,7 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <img src="/images/bvisible-logo.png" alt="bVisible logo" className="w-6 h-6 object-contain" />
+                <img src="/images/bvisible-logo.png" alt="bVisible logo" className="h-9 w-9 object-contain" />
                 <span className="font-bold tracking-tight text-base leading-none text-[#0F0F10]">
                   b<span className="text-lg">V</span>isible
                 </span>
