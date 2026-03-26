@@ -46,11 +46,6 @@ export default function LandingPage() {
           style={{ background: "radial-gradient(circle at 50% 0%, rgba(24, 24, 27, 0.03) 0%, transparent 70%)" }}
         >
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#E2E2E3] bg-white mb-8">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.1em]">System Operational: 14 LLMs Tracked</span>
-            </div>
-
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-[#0F0F10] mb-8 leading-[1.05]">
               Track how AI models <br className="hidden md:block" /> see your brand.
             </h1>
