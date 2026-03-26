@@ -10,7 +10,12 @@ export default function LandingPage() {
       <header className="w-full top-0 sticky z-50 bg-white/80 backdrop-blur-md border-b border-[#E2E2E3]/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <div className="text-xl font-bold tracking-tighter">bVisible</div>
+            <div className="flex items-center gap-2">
+              <img src="/images/bvisible-logo.png" alt="bVisible logo" className="w-6 h-6 object-contain" />
+              <span className="font-bold tracking-tight text-base leading-none text-[#0F0F10]">
+                b<span className="text-lg">V</span>isible
+              </span>
+            </div>
             <nav className="hidden md:flex items-center gap-6">
               <a className="text-sm font-medium text-[#0F0F10]/60 hover:text-[#0F0F10] transition-colors" href="#features">Product</a>
               <a className="text-sm font-medium text-[#0F0F10]/60 hover:text-[#0F0F10] transition-colors" href="#">Pricing</a>
@@ -165,7 +170,12 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
             <div className="space-y-4">
-              <div className="font-bold text-xl tracking-tighter">bVisible</div>
+              <div className="flex items-center gap-2">
+                <img src="/images/bvisible-logo.png" alt="bVisible logo" className="w-6 h-6 object-contain" />
+                <span className="font-bold tracking-tight text-base leading-none text-[#0F0F10]">
+                  b<span className="text-lg">V</span>isible
+                </span>
+              </div>
               <p className="text-neutral-400 text-sm max-w-xs">
                 Mission Control for AI Visibility. Deconstructing the synthesis of the next web.
               </p>
@@ -193,6 +203,7 @@ export default function LandingPage() {
           </div>
           <div className="pt-8 border-t border-[#E2E2E3] flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-400">
             <div>© 2026 bVisible. All rights reserved.</div>
+
             <div className="flex gap-6">
               <a className="hover:text-black transition-colors" href="#">Twitter</a>
               <a className="hover:text-black transition-colors" href="#">LinkedIn</a>

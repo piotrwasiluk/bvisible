@@ -38,9 +38,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col h-full w-64 bg-surface-container-low border-r border-border/30 shrink-0 py-6 px-4">
         <div className="flex items-center gap-3 px-2 mb-8">
-          <div className="font-mono font-bold text-foreground tracking-tighter text-lg uppercase">
-            bVisible
-          </div>
+          <img src="/images/bvisible-logo.png" alt="bVisible" className="w-6 h-6 object-contain shrink-0" />
+          <span className="font-bold text-foreground tracking-tight text-base leading-none">
+            b<span className="text-lg">V</span>isible
+          </span>
           {!isSetup && <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-ring" />}
         </div>
         
