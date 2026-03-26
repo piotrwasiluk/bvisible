@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
-import { workspacesTable } from "@workspace/db";
+import { workspacesTable, websitesTable, competitorsTable } from "@workspace/db";
 import { CreateWorkspaceBody } from "@workspace/api-zod";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -40,6 +40,9 @@ router.post("/workspace", async (req, res) => {
       .where(eq(workspacesTable.id, existing[0].id))
       .returning();
     workspace = updated;
+
+    await db.delete(websitesTable).where(eq(websitesTable.workspaceId, workspace.id));
+    await db.delete(competitorsTable).where(eq(competitorsTable.workspaceId, workspace.id));
   } else {
     const [created] = await db
       .insert(workspacesTable)
@@ -54,6 +57,24 @@ router.post("/workspace", async (req, res) => {
       })
       .returning();
     workspace = created;
+  }
+
+  await db.insert(websitesTable).values({
+    workspaceId: workspace.id,
+    url: data.websiteUrl,
+    isPrimary: true,
+  });
+
+  const competitorUrls = [
+    data.competitor1Url,
+    data.competitor2Url,
+    data.competitor3Url,
+  ].filter((url): url is string => !!url);
+
+  if (competitorUrls.length > 0) {
+    await db.insert(competitorsTable).values(
+      competitorUrls.map((url) => ({ workspaceId: workspace.id, url }))
+    );
   }
 
   res.status(201).json(workspace);

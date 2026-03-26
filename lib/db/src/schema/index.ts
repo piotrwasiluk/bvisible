@@ -20,3 +20,4 @@
 export * from "./workspace";
 export * from "./website";
 export * from "./competitor";
+export * from "./user";
