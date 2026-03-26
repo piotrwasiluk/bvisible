@@ -85,71 +85,12 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Dashboard Content Mock */}
-            <div className="p-8 space-y-8">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white p-6 rounded-xl border border-[#E2E2E3]/50">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-400 mb-2">Visibility</div>
-                  <div className="text-2xl font-bold">84.2%</div>
-                  <div className="h-1 w-full bg-neutral-100 mt-4 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: "84%" }} />
-                  </div>
-                </div>
-                <div className="bg-white p-6 rounded-xl border border-[#E2E2E3]/50">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-400 mb-2">Sentiment</div>
-                  <div className="text-2xl font-bold">Strongly Pos.</div>
-                  <div className="text-[10px] text-emerald-600 font-medium mt-1">+12.4% vs last mo</div>
-                </div>
-                <div className="bg-white p-6 rounded-xl border border-[#E2E2E3]/50">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-400 mb-2">Citations</div>
-                  <div className="text-2xl font-bold">12.5x</div>
-                  <div className="text-[10px] text-neutral-400 mt-1">Avg per 1k queries</div>
-                </div>
-                <div className="bg-white p-6 rounded-xl border border-[#E2E2E3]/50">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-400 mb-2">Topic Gap</div>
-                  <div className="text-2xl font-bold">-14%</div>
-                  <div className="text-[10px] text-red-500 font-medium mt-1">Action Required</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 bg-white p-6 rounded-xl border border-[#E2E2E3]/50 h-64">
-                  <div className="flex justify-between mb-8">
-                    <div className="font-bold">Model Prominence Matrix</div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-neutral-400">GPT-4, Claude-3, Gemini</div>
-                  </div>
-                  <div className="space-y-5">
-                    {[
-                      { model: "GPT-4o", pct: 88 },
-                      { model: "Claude 3", pct: 74 },
-                      { model: "Gemini", pct: 42 },
-                    ].map(({ model, pct }) => (
-                      <div key={model} className="flex items-center gap-4">
-                        <div className="w-20 text-[10px] font-mono uppercase tracking-[0.1em]">{model}</div>
-                        <div className="flex-1 h-3 bg-neutral-50 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#0F0F10] rounded-full" style={{ width: `${pct}%` }} />
-                        </div>
-                        <div className="w-10 text-[10px] font-bold">{pct}%</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-[#0F0F10] p-6 rounded-xl text-white">
-                  <div className="font-bold mb-4">Narrative Audit</div>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.1em] opacity-60 mb-1">Sentiment Driver</div>
-                      <div className="text-sm font-medium italic">"Reliable scaling partner"</div>
-                    </div>
-                    <div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.1em] opacity-60 mb-1">Top Association</div>
-                      <div className="text-sm font-medium">Enterprise Security</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Screenshot Preview */}
+            <img
+              src="/images/citations-preview.png"
+              alt="Citation Intelligence dashboard"
+              className="w-full block"
+            />
           </div>
         </section>
 
