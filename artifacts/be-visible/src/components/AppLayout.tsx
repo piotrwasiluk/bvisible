@@ -5,14 +5,15 @@ import {
   TerminalSquare, 
   Quote, 
   BarChart, 
-  ArrowLeftRight,
+  Users,
   ListTodo,
   FileText,
   Settings,
   HelpCircle,
   Plus,
   Search,
-  Bell
+  Bell,
+  Play
 } from "lucide-react";
 import { useWorkspaceConfig } from "@/hooks/use-workspace";
 
@@ -21,7 +22,7 @@ const NAV_ITEMS = [
   { href: "/prompts", label: "Prompts", icon: TerminalSquare },
   { href: "/citations", label: "Citations", icon: Quote },
   { href: "/topic-gaps", label: "Topic Gaps", icon: BarChart },
-  { href: "/competitors", label: "Benchmarking", icon: ArrowLeftRight },
+  { href: "/competitors", label: "Competitors", icon: Users },
   { href: "/recommendations", label: "Recommendations", icon: ListTodo },
   { href: "/reports", label: "Reports", icon: FileText },
 ];
@@ -30,7 +31,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { data: workspace } = useWorkspaceConfig();
 
-  // If we're on setup, we might want a different layout, but for now we share the shell
   const isSetup = location === "/setup";
 
   return (
@@ -91,13 +91,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </span>
           </div>
           
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4 text-muted-foreground">
+          <div className="flex items-center gap-4">
+            {!isSetup && (
+              <button className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-mono text-xs font-bold uppercase tracking-widest hover:bg-primary/90 transition-all active:scale-[0.98]">
+                <Play className="w-3 h-3" />
+                Run Audit
+              </button>
+            )}
+            <div className="flex items-center gap-3 text-muted-foreground">
               <button className="hover:text-foreground transition-colors"><Search className="w-4 h-4" /></button>
               <button className="hover:text-foreground transition-colors"><Bell className="w-4 h-4" /></button>
             </div>
             <div className="h-8 w-8 rounded-full bg-surface-container-low border border-border overflow-hidden flex items-center justify-center">
-              {/* User Avatar Placeholder */}
               <span className="text-xs font-bold font-mono text-muted-foreground">US</span>
             </div>
           </div>

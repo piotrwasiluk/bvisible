@@ -2,14 +2,16 @@ import { useQueryClient } from "@tanstack/react-query";
 import { 
   useGetWorkspace, 
   useCreateWorkspace,
-  getGetWorkspaceQueryKey
+  getGetWorkspaceQueryKey,
+  getGetWorkspaceQueryOptions
 } from "@workspace/api-client-react";
 
-// Re-export the generated hooks, adding cache invalidation on mutations
 export function useWorkspaceConfig() {
+  const queryOptions = getGetWorkspaceQueryOptions();
   return useGetWorkspace({
     query: {
-      retry: false, // Don't retry if 404
+      queryKey: queryOptions.queryKey,
+      retry: false,
       refetchOnWindowFocus: false,
     }
   });
@@ -21,7 +23,6 @@ export function useSaveWorkspace() {
   return useCreateWorkspace({
     mutation: {
       onSuccess: () => {
-        // Invalidate workspace query to trigger UI update
         queryClient.invalidateQueries({ queryKey: getGetWorkspaceQueryKey() });
       },
     }

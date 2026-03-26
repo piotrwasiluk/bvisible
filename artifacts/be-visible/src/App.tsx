@@ -44,42 +44,38 @@ function Router() {
     <Switch>
       <Route path="/" component={RootRedirect} />
       
-      {/* Setup doesn't need the full app shell navigation if we don't want it, 
-          but for simplicity we'll wrap it in the shell, or we can render it isolated.
-          Given the specs, the setup form takes up the whole space but matching the style. 
-          Let's render it within AppLayout so the brand stays consistent. */}
       <Route path="/setup">
         <AppLayout><SetupPage /></AppLayout>
       </Route>
-      
+
       <Route path="/dashboard">
         <AppLayout><DashboardPage /></AppLayout>
       </Route>
-      
+
       <Route path="/prompts">
         <AppLayout><PromptsPage /></AppLayout>
       </Route>
-      
+
       <Route path="/citations">
         <AppLayout><CitationsPage /></AppLayout>
       </Route>
-      
+
       <Route path="/topic-gaps">
         <AppLayout><TopicGapsPage /></AppLayout>
       </Route>
-      
+
       <Route path="/competitors">
         <AppLayout><CompetitorsPage /></AppLayout>
       </Route>
-      
+
       <Route path="/recommendations">
         <AppLayout><RecommendationsPage /></AppLayout>
       </Route>
-      
+
       <Route path="/reports">
         <AppLayout><ReportsPage /></AppLayout>
       </Route>
-      
+
       <Route path="/settings">
         <AppLayout><SettingsPage /></AppLayout>
       </Route>
