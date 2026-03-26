@@ -19,7 +19,14 @@ router.post("/workspace", async (req, res) => {
     return;
   }
 
-  const data = parsed.data;
+  const rawData = parsed.data;
+  const data = {
+    ...rawData,
+    competitor1Url: rawData.competitor1Url?.trim() || null,
+    competitor2Url: rawData.competitor2Url?.trim() || null,
+    competitor3Url: rawData.competitor3Url?.trim() || null,
+    productCategories: rawData.productCategories?.trim() || null,
+  };
 
   const existing = await db.select().from(workspacesTable).limit(1);
   let workspace;
