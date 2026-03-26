@@ -1,0 +1,15 @@
+packages:
+  "react-hook-form": "Form state management"
+  "@hookform/resolvers": "Zod validation for forms"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for merging tailwind classes without conflicts"
+  "framer-motion": "For subtle UI animations and transitions"
+
+images:
+  - path: "artifacts/be-visible/public/images/data-engine-viz.png"
+    description: "abstract digital visualization of a data grid and light particles in a deep dark void space environment, monochrome with subtle cool gray, high tech, linear style"
+    aspect_ratio: "16:9"
+
+notes:
+  - Using generated Orval hooks from @workspace/api-client-react
+  - Workspace setup form posts to /api/workspace

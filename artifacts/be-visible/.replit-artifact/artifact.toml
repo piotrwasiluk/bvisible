@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Be Visible"
+version = "1.0.0"
+id = "artifacts/be-visible"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22778
+
+[services.development]
+run = "pnpm --filter @workspace/be-visible run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/be-visible", "run", "build" ]
+publicDir = "artifacts/be-visible/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22778"
+BASE_PATH = "/"

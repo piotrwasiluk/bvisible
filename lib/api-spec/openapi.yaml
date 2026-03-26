@@ -1,15 +1,16 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: bVisible API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: workspace
+    description: Workspace setup and management
 paths:
   /healthz:
     get:
@@ -24,6 +25,47 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /workspace:
+    post:
+      operationId: createWorkspace
+      tags: [workspace]
+      summary: Create or update workspace setup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkspaceSetupInput"
+      responses:
+        "201":
+          description: Workspace created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    get:
+      operationId: getWorkspace
+      tags: [workspace]
+      summary: Get current workspace
+      responses:
+        "200":
+          description: Current workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "404":
+          description: No workspace configured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +75,77 @@ components:
           type: string
       required:
         - status
-
+    WorkspaceSetupInput:
+      type: object
+      properties:
+        brandName:
+          type: string
+          description: The brand or company name
+        websiteUrl:
+          type: string
+          description: The primary website URL
+        competitor1Url:
+          type: string
+          description: First competitor domain URL
+        competitor2Url:
+          type: string
+          description: Second competitor domain URL
+        competitor3Url:
+          type: string
+          description: Third competitor domain URL
+        region:
+          type: string
+          description: Target region/language (e.g. "us-en")
+          default: "us-en"
+        productCategories:
+          type: string
+          description: Comma-separated list of product/service categories
+      required:
+        - brandName
+        - websiteUrl
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: integer
+        brandName:
+          type: string
+        websiteUrl:
+          type: string
+        competitor1Url:
+          type: string
+          nullable: true
+        competitor2Url:
+          type: string
+          nullable: true
+        competitor3Url:
+          type: string
+          nullable: true
+        region:
+          type: string
+        productCategories:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - brandName
+        - websiteUrl
+        - region
+        - createdAt
+        - updatedAt
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message

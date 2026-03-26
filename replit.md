@@ -94,3 +94,28 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+
+### `artifacts/be-visible` (`@workspace/be-visible`)
+
+React + Vite front-end for the **bVisible** AEO monitoring tool. Built with Tailwind CSS v4, React Query, react-hook-form + Zod, Framer Motion, and Wouter for routing.
+
+- Entry: `src/main.tsx` → `src/App.tsx`
+- Routing: Wouter. Root path `/` checks for workspace and redirects to `/setup` (no workspace) or `/dashboard`
+- Pages: `setup`, `dashboard`, `prompts`, `citations`, `topic-gaps`, `competitors`, `recommendations`, `reports`, `settings`
+- Shared layout: `src/components/AppLayout.tsx` — sidebar nav + top bar
+- Workspace hooks: `src/hooks/use-workspace.ts` — wraps generated React Query hooks; `useWorkspaceConfig()` / `useSaveWorkspace()`
+- Design: monochrome Linear-inspired system, Inter for UI text, JetBrains Mono for labels/mono accents
+- `pnpm --filter @workspace/be-visible run dev` — start Vite dev server
+
+## API Routes
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/healthz` | Health check |
+| GET | `/api/workspace` | Get configured workspace (404 if none) |
+| POST | `/api/workspace` | Create or update workspace (upsert pattern, row id=1) |
+
+## Database Schema
+
+### `workspaces` table
+One row at most (id=1). Stores brand identity, competitors, region, and product categories for the workspace.
