@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>bVisible - Competitor Benchmarking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#3b3b3c",
+              "surface-container-high": "#e8e8e9",
+              "surface-bright": "#f9f9fa",
+              "on-primary": "#e5e2e3",
+              "primary-fixed-dim": "#474647",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#2f3132",
+              "secondary-container": "#d5d4d4",
+              "secondary-fixed": "#c7c6c6",
+              "secondary-fixed-dim": "#acabab",
+              "primary-container": "#3c3b3c",
+              "on-tertiary": "#e1e2e6",
+              "inverse-on-surface": "#f0f1f2",
+              "surface-tint": "#5f5e5f",
+              "error-container": "#ffdad6",
+              "on-primary-container": "#ffffff",
+              "surface-container-low": "#f3f3f4",
+              "on-tertiary-fixed-variant": "#e1e2e6",
+              "on-primary-fixed": "#ffffff",
+              "primary-fixed": "#5f5e5f",
+              "inverse-primary": "#c8c6c7",
+              "primary": "#000000",
+              "on-primary-fixed-variant": "#e5e2e3",
+              "outline": "#777777",
+              "surface-dim": "#dadadb",
+              "on-surface-variant": "#474747",
+              "error": "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed": "#ffffff",
+              "background": "#f9f9fa",
+              "on-error-container": "#410002",
+              "tertiary-fixed": "#5c5e62",
+              "tertiary-fixed-dim": "#44474a",
+              "on-secondary-container": "#1b1c1c",
+              "secondary": "#5e5e5e",
+              "on-secondary-fixed": "#1b1c1c",
+              "surface-container": "#eeeeef",
+              "surface-variant": "#e2e2e3",
+              "on-surface": "#1a1c1d",
+              "surface-container-highest": "#e2e2e3",
+              "outline-variant": "#c6c6c6",
+              "on-tertiary-container": "#ffffff",
+              "on-error": "#ffffff",
+              "surface": "#f9f9fa",
+              "tertiary": "#393c3f",
+              "tertiary-container": "#727578",
+              "on-background": "#1a1c1d"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["JetBrains Mono", "monospace"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex">
+<!-- SideNavBar Anchor -->
+<aside class="flex flex-col h-full py-6 px-4 gap-8 h-screen w-64 border-r-0 bg-neutral-50 dark:bg-neutral-900 sticky top-0 shrink-0">
+<div class="flex flex-col gap-1">
+<span class="font-mono font-bold text-black dark:text-white tracking-tighter text-lg">bVisible</span>
+<span class="font-inter tracking-tight font-medium text-[10px] text-neutral-400 uppercase">Mission Control</span>
+</div>
+<button class="bg-primary text-on-primary font-medium py-2.5 px-4 rounded flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="text-sm">New Audit</span>
+</button>
+<nav class="flex flex-col gap-1 grow">
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-all font-inter tracking-tight font-medium text-sm rounded" href="#">
+<span class="material-symbols-outlined">space_dashboard</span>
+<span>Workspace</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-all font-inter tracking-tight font-medium text-sm rounded" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-all font-inter tracking-tight font-medium text-sm rounded" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span>Topic Gap</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-white dark:bg-black text-black dark:text-white font-bold shadow-sm transition-all duration-200 font-inter tracking-tight text-sm rounded" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">compare_arrows</span>
+<span>Benchmarking</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-all font-inter tracking-tight font-medium text-sm rounded" href="#">
+<span class="material-symbols-outlined">fact_check</span>
+<span>Audits</span>
+</a>
+</nav>
+<div class="flex flex-col gap-1 border-t border-neutral-100 dark:border-neutral-800 pt-6">
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 transition-all font-inter tracking-tight font-medium text-sm rounded" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 transition-all font-inter tracking-tight font-medium text-sm rounded" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span>Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-h-screen">
+<!-- TopAppBar Anchor -->
+<header class="flex items-center justify-between w-full px-8 py-4 bg-white dark:bg-black border-b border-neutral-100 dark:border-neutral-800">
+<div class="flex items-center gap-8">
+<h1 class="font-headline font-extrabold text-xl tracking-tighter">Competitor Benchmarking</h1>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-mono text-[11px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 pb-2 hover:text-black dark:hover:text-white transition-colors" href="#">Workspace</a>
+<a class="font-mono text-[11px] uppercase tracking-widest text-black dark:text-white border-b-2 border-black dark:border-white pb-2 transition-colors" href="#">Reports</a>
+<a class="font-mono text-[11px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 pb-2 hover:text-black dark:hover:text-white transition-colors" href="#">History</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-md">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-xs w-48 font-inter" placeholder="Search parameters..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<div class="w-8 h-8 rounded-full bg-neutral-200 overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Professional portrait of a woman in minimalist studio lighting with neutral background for corporate profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlIjmQ2Kvh9aV8oMqXwiqVySsA2jOEv2H5eEZpcvUA-qJX-63qiNfKUSj5eRmS_ZOllZYJzGIaF1SXGHPHQ_7rnAMzPD4k1CfhUTb3KM2gooU67yFQd8fWA3Vflz_UiSCKWb0D933HFNF_OGYpg5S2YvOjvIfg9AXjG0MbuCVokXA4ZaL8cfGNW0E25lvwLD8NDt5E8oUrNn-2FgqziO3fzNA-QoQJBfAHvzN9jJj07xT_6dMFS3BtwqpzYxxKMvrZHhiik-Dpns"/>
+</div>
+</div>
+</header>
+<!-- Benchmarking Content -->
+<div class="p-8 flex flex-col gap-8 max-w-7xl">
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-outline-variant/15 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">Overall Position</span>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+<span class="font-label text-[10px]">LIVE</span>
+</div>
+</div>
+<div class="flex flex-baseline gap-2 mt-2">
+<span class="text-3xl font-extrabold tracking-tighter">WINNING</span>
+<span class="material-symbols-outlined text-green-500 text-sm">trending_up</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-2 font-inter leading-relaxed">Dominating 64% of high-intent search vectors across core categories.</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-lg flex flex-col gap-2">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">Visibility Score</span>
+<div class="mt-2">
+<span class="text-3xl font-bold tracking-tighter">88.4</span>
+<span class="font-label text-[12px] text-on-surface-variant ml-1">/100</span>
+</div>
+<div class="w-full h-1 bg-neutral-200 mt-4 rounded-full overflow-hidden">
+<div class="h-full bg-black w-[88.4%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-lg flex flex-col gap-2">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">Prompt Coverage</span>
+<div class="mt-2">
+<span class="text-3xl font-bold tracking-tighter">92%</span>
+</div>
+<div class="flex items-center gap-2 mt-4">
+<span class="font-label text-[10px] bg-white px-2 py-0.5 rounded border border-neutral-100">+4.2% MoM</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-lg flex flex-col gap-2">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">Direct Competitors</span>
+<div class="flex -space-x-2 mt-4">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-neutral-300 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="minimalist abstract vector logo for tech company with geometric shapes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu7Xes9sb-xKMm1qVhIOZGlwSFl2Oe0DQCmJyREGh3qz2lpN2bHZB_43ni-O_jUTZxZsItmCdQZxnQy92RA1ob7owpbqFlqf7ASkflf1Xxh0rh4ODaGWA_cp1ZLxAOCUIvrdMOIvnihOiJni498eGP9Cf-IcuepkmnsvMu2IJtSjetOEG4VgP6YuzUCvx0QsaGt6xz2pV403x1PS-4UuXbdp4wQ8wTyc0Ea66hP2o_20N5o8QSNUYTfUsxPdYPvw8T3qMwO6UqKsA"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-neutral-400 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="minimalist tech logo icon blue monochrome" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfdZFvpRllVCiGrnBr-LnQ1Iw3i-Qa4lhLVExr8rzFU5IWGadf0DCjaRz6Z6N7BTs0nIdm8UtIL_WcJr0j8HocsanQXiFyhdSHq-i9Su9kvO1jPdzyKShXkLwSedGHwEUccKiJgdhTzXbwBefbMcoaFdCtqSliNMx_UslR8uzuNhqTPRCxMudTlv8Kj3cuYSWQBfeVEaFjp7K-I0zRrrNnmYXsyVLjIlodbb8dK5HXdxJNQ1SII80bavK7Cz-pn4sUfs7yTGHM0tg"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-neutral-500 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="minimalist industrial logo mark in grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHmB8ZOIQ-KCaxDFTEKNzxViVTa6F08L2v7IaWOFDZQTqbBKyPLWfCtPhK6PzhbFrMW8QfDSmh3zeTfndTd3nQHoIDUs4g3UjsqMgP3EoFMs2ywGrA5BN5QuKWkuH68FwtmAztuh-zFcX_ah5oAbfVz1m_zk5zIJE_feNf5INcfoN9H10EdSXd1ena9j2GC5K4cNYrjIz1FAPzEwRxqkKURGAB9AM0QOyn1MCTCgoUyJdalS1fD8QlO_Kr9D7vr6xBQox47yBa7_A"/>
+</div>
+</div>
+<span class="font-label text-[10px] mt-2">3 ACTIVE AUDITS</span>
+</div>
+</div>
+<!-- Main Comparison Table Section -->
+<section class="bg-white dark:bg-black rounded-lg border border-outline-variant/15 overflow-hidden flex flex-col">
+<div class="p-6 border-b border-neutral-100 dark:border-neutral-800 flex justify-between items-center bg-surface-container-lowest">
+<div class="flex items-center gap-4">
+<h2 class="font-bold text-lg tracking-tight">Technical Comparison</h2>
+<span class="font-label text-[10px] bg-black text-white px-2 py-0.5 rounded">Q3 2023</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 text-xs font-medium border border-outline-variant rounded hover:bg-neutral-50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+                            Filter
+                        </button>
+<button class="px-3 py-1.5 text-xs font-medium border border-outline-variant rounded hover:bg-neutral-50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                            Export
+                        </button>
+</div>
+</div>
+<div class="overflow-x-auto no-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="p-6 font-label text-[11px] uppercase tracking-wider text-on-surface-variant border-b border-neutral-100 dark:border-neutral-800">Entity</th>
+<th class="p-6 font-label text-[11px] uppercase tracking-wider text-on-surface-variant border-b border-neutral-100 dark:border-neutral-800 text-center">Visibility</th>
+<th class="p-6 font-label text-[11px] uppercase tracking-wider text-on-surface-variant border-b border-neutral-100 dark:border-neutral-800 text-center">Citation Freq</th>
+<th class="p-6 font-label text-[11px] uppercase tracking-wider text-on-surface-variant border-b border-neutral-100 dark:border-neutral-800 text-center">Prompt Cov</th>
+<th class="p-6 font-label text-[11px] uppercase tracking-wider text-on-surface-variant border-b border-neutral-100 dark:border-neutral-800 text-center">Category Leadership</th>
+<th class="p-6 font-label text-[11px] uppercase tracking-wider text-on-surface-variant border-b border-neutral-100 dark:border-neutral-800 text-right">Trend</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-neutral-50">
+<!-- Primary Brand -->
+<tr class="bg-surface-container-lowest hover:bg-neutral-50 transition-colors group">
+<td class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-black flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[18px]">bolt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-sm tracking-tight">bVisible (Brand)</span>
+<span class="font-label text-[10px] text-neutral-400">YOUR DOMAIN</span>
+</div>
+</div>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm font-bold">88.4%</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">1.4k / wk</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">92.0%</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-label text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded font-bold uppercase">WINNING</span>
+</td>
+<td class="p-6 text-right">
+<span class="material-symbols-outlined text-green-500 text-[20px]">trending_up</span>
+</td>
+</tr>
+<!-- Competitor 1 -->
+<tr class="hover:bg-neutral-50 transition-colors">
+<td class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center border border-outline-variant/20">
+<span class="material-symbols-outlined text-neutral-400 text-[18px]">token</span>
+</div>
+<div class="flex flex-col">
+<span class="font-medium text-sm tracking-tight text-neutral-700">Competitor A</span>
+<span class="font-label text-[10px] text-neutral-400">DIRECT RIVAL</span>
+</div>
+</div>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">74.2%</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">0.9k / wk</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">81.5%</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-label text-[10px] text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded font-bold uppercase">LOSING</span>
+</td>
+<td class="p-6 text-right">
+<span class="material-symbols-outlined text-red-500 text-[20px]">trending_down</span>
+</td>
+</tr>
+<!-- Competitor 2 -->
+<tr class="hover:bg-neutral-50 transition-colors">
+<td class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center border border-outline-variant/20">
+<span class="material-symbols-outlined text-neutral-400 text-[18px]">hexagon</span>
+</div>
+<div class="flex flex-col">
+<span class="font-medium text-sm tracking-tight text-neutral-700">Competitor B</span>
+<span class="font-label text-[10px] text-neutral-400">EMERGING</span>
+</div>
+</div>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">82.1%</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">1.1k / wk</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">88.2%</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-label text-[10px] text-orange-600 bg-orange-50 px-2 py-0.5 rounded font-bold uppercase">TIED</span>
+</td>
+<td class="p-6 text-right">
+<span class="material-symbols-outlined text-neutral-400 text-[20px]">trending_flat</span>
+</td>
+</tr>
+<!-- Competitor 3 -->
+<tr class="hover:bg-neutral-50 transition-colors">
+<td class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center border border-outline-variant/20">
+<span class="material-symbols-outlined text-neutral-400 text-[18px]">blur_on</span>
+</div>
+<div class="flex flex-col">
+<span class="font-medium text-sm tracking-tight text-neutral-700">Competitor C</span>
+<span class="font-label text-[10px] text-neutral-400">ESTABLISHED</span>
+</div>
+</div>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">61.9%</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">0.6k / wk</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-mono text-sm">54.0%</span>
+</td>
+<td class="p-6 text-center">
+<span class="font-label text-[10px] text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded font-bold uppercase">LOSING</span>
+</td>
+<td class="p-6 text-right">
+<span class="material-symbols-outlined text-neutral-400 text-[20px]">trending_flat</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Detail Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Visibility Breakdown -->
+<div class="flex flex-col gap-4">
+<h3 class="font-label text-[11px] uppercase tracking-widest text-on-surface-variant font-bold">Visibility Breakdown</h3>
+<div class="bg-white p-6 rounded-lg border border-outline-variant/15 flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center font-label text-[10px]">
+<span>LLM SEARCH (GPT/BING)</span>
+<span class="font-bold">94%</span>
+</div>
+<div class="w-full h-1.5 bg-neutral-100 rounded-full">
+<div class="bg-black h-full w-[94%] rounded-full"></div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center font-label text-[10px]">
+<span>SOCIAL LISTENING</span>
+<span class="font-bold">72%</span>
+</div>
+<div class="w-full h-1.5 bg-neutral-100 rounded-full">
+<div class="bg-neutral-500 h-full w-[72%] rounded-full"></div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center font-label text-[10px]">
+<span>VERTICAL DIRECTORIES</span>
+<span class="font-bold">81%</span>
+</div>
+<div class="w-full h-1.5 bg-neutral-100 rounded-full">
+<div class="bg-neutral-500 h-full w-[81%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Strategic Gaps -->
+<div class="flex flex-col gap-4">
+<h3 class="font-label text-[11px] uppercase tracking-widest text-on-surface-variant font-bold">Critical Gaps</h3>
+<div class="grid grid-cols-1 gap-3">
+<div class="bg-surface-container-low p-4 rounded-lg flex gap-4 items-center">
+<span class="material-symbols-outlined text-orange-500">warning</span>
+<div class="flex flex-col">
+<span class="text-sm font-bold tracking-tight">Competitor B parity in "DevOps Tools"</span>
+<span class="text-xs text-on-surface-variant">Citation density gap is narrowing within the last 48 hours.</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg flex gap-4 items-center">
+<span class="material-symbols-outlined text-green-500">check_circle</span>
+<div class="flex flex-col">
+<span class="text-sm font-bold tracking-tight">100% Coverage on "Scalability" Prompts</span>
+<span class="text-xs text-on-surface-variant">Maintained leadership despite Competitor A content offensive.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

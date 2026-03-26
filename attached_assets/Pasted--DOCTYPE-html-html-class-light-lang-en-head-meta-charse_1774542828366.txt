@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#3b3b3c",
+              "surface-container-high": "#e8e8e9",
+              "surface-bright": "#f9f9fa",
+              "on-primary": "#e5e2e3",
+              "primary-fixed-dim": "#474647",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#2f3132",
+              "secondary-container": "#d5d4d4",
+              "secondary-fixed": "#c7c6c6",
+              "secondary-fixed-dim": "#acabab",
+              "primary-container": "#3c3b3c",
+              "on-tertiary": "#e1e2e6",
+              "inverse-on-surface": "#f0f1f2",
+              "surface-tint": "#5f5e5f",
+              "error-container": "#ffdad6",
+              "on-primary-container": "#ffffff",
+              "surface-container-low": "#f3f3f4",
+              "on-tertiary-fixed-variant": "#e1e2e6",
+              "on-primary-fixed": "#ffffff",
+              "primary-fixed": "#5f5e5f",
+              "inverse-primary": "#c8c6c7",
+              "primary": "#000000",
+              "on-primary-fixed-variant": "#e5e2e3",
+              "outline": "#777777",
+              "surface-dim": "#dadadb",
+              "on-surface-variant": "#474747",
+              "error": "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed": "#ffffff",
+              "background": "#f9f9fa",
+              "on-error-container": "#410002",
+              "tertiary-fixed": "#5c5e62",
+              "tertiary-fixed-dim": "#44474a",
+              "on-secondary-container": "#1b1c1c",
+              "secondary": "#5e5e5e",
+              "on-secondary-fixed": "#1b1c1c",
+              "surface-container": "#eeeeef",
+              "surface-variant": "#e2e2e3",
+              "on-surface": "#1a1c1d",
+              "surface-container-highest": "#e2e2e3",
+              "outline-variant": "#c6c6c6",
+              "on-tertiary-container": "#ffffff",
+              "on-error": "#ffffff",
+              "surface": "#f9f9fa",
+              "tertiary": "#393c3f",
+              "tertiary-container": "#727578",
+              "on-background": "#1a1c1d"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["JetBrains Mono", "monospace"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9fa;
+        }
+        .mono-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-on-surface">
+<!-- SideNavBar (from JSON) -->
+<aside class="h-screen w-64 border-r-0 flex flex-col py-6 px-4 gap-8 bg-neutral-50 dark:bg-neutral-900 font-inter tracking-tight font-medium text-sm antialiased shrink-0">
+<div class="flex items-center gap-3 px-2">
+<div class="w-8 h-8 bg-primary flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">view_in_ar</span>
+</div>
+<div>
+<h1 class="font-mono font-bold text-black dark:text-white tracking-tighter text-lg leading-none">bVisible</h1>
+<p class="text-[10px] text-neutral-500 uppercase tracking-widest mt-0.5">Mission Control</p>
+</div>
+</div>
+<div class="flex flex-col gap-1 grow">
+<button class="flex items-center gap-3 px-3 py-2 rounded text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-150 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="space_dashboard">space_dashboard</span>
+<span>Workspace</span>
+</button>
+<button class="flex items-center gap-3 px-3 py-2 rounded text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-150 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Dashboard</span>
+</button>
+<!-- Active Tab: Topic Gap -->
+<button class="flex items-center gap-3 px-3 py-2 rounded bg-white dark:bg-black text-black dark:text-white font-bold shadow-sm transition-all duration-200 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span>Topic Gap</span>
+</button>
+<button class="flex items-center gap-3 px-3 py-2 rounded text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-150 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+<span>Benchmarking</span>
+</button>
+<button class="flex items-center gap-3 px-3 py-2 rounded text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-150 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span>Audits</span>
+</button>
+<div class="mt-8 px-2">
+<button class="w-full bg-primary text-white py-2 rounded font-semibold text-xs transition-opacity hover:opacity-90">
+                    New Audit
+                </button>
+</div>
+</div>
+<div class="flex flex-col gap-1 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+<button class="flex items-center gap-3 px-3 py-2 rounded text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-150">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</button>
+<button class="flex items-center gap-3 px-3 py-2 rounded text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-150">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</button>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- TopAppBar (from JSON) -->
+<header class="flex items-center justify-between w-full px-8 py-4 border-b border-neutral-100 dark:border-neutral-800 bg-white dark:bg-black shrink-0">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-neutral-400" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 font-mono text-[11px] uppercase tracking-widest w-64 placeholder:text-neutral-400" placeholder="Search topics..." type="text"/>
+</div>
+<nav class="hidden md:flex gap-6">
+<a class="font-mono text-[11px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 pb-2 hover:text-black dark:hover:text-white transition-colors" href="#">Workspace</a>
+<a class="font-mono text-[11px] uppercase tracking-widest text-black dark:text-white border-b-2 border-black dark:border-white pb-2 transition-colors" href="#">Reports</a>
+<a class="font-mono text-[11px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 pb-2 hover:text-black dark:hover:text-white transition-colors" href="#">History</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-neutral-400 hover:text-black transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-4 w-[1px] bg-neutral-200"></div>
+<button class="font-mono text-[11px] uppercase tracking-widest text-neutral-500 hover:text-black">Switch Workspace</button>
+<button class="bg-primary text-white px-4 py-1.5 rounded font-mono text-[11px] uppercase tracking-widest hover:opacity-80 transition-opacity">Run Audit</button>
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-neutral-100" data-alt="Close up portrait of a professional man with a neutral expression in a minimalist modern office environment with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6_llTJz7rXb5rASNeJIcV6S7I1ESDzCaUnxP3ppfjmz3wM9L7eKmtm8cCg5YcSSNWC-ni2cQS4i0dhmBM2jUMyv-iV21Zdx9MPgNp43yfMAo0CuWDJmtNLWiT6UCvPM9_L6ayKebvgzlLIZbtYg2DT9-QAQ9BpFL7IFJeslJ-NSMZ6r5FAgKRSkgk92DyRy8zfKq06N3kZ3YDX8iqc4ZxHqjouPPJ499Pbt67UOoJXD9KpgAKmRdof4CQzjIrXu6x0hlFn2K8sTQ"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto p-8 flex gap-8">
+<!-- Left: Table View (The Content Backlog) -->
+<div class="flex-1 flex flex-col gap-6">
+<div class="flex items-end justify-between">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="mono-label text-neutral-500">SYSTEM_LIVE: TOPIC_ENGINE_v4.2</span>
+</div>
+<h2 class="text-4xl font-bold tracking-tight text-primary">Topic Gap Analysis</h2>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-high px-3 py-1.5 flex items-center gap-2 rounded transition-colors hover:bg-surface-container-highest">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span class="mono-label">FILTER</span>
+</button>
+<button class="bg-surface-container-high px-3 py-1.5 flex items-center gap-2 rounded transition-colors hover:bg-surface-container-highest">
+<span class="material-symbols-outlined text-sm">download</span>
+<span class="mono-label">EXPORT</span>
+</button>
+</div>
+</div>
+<!-- Metrics Bento Grid -->
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="mono-label text-neutral-500 mb-1 uppercase">Winning</p>
+<p class="text-2xl font-bold">14</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="mono-label text-neutral-500 mb-1 uppercase">Tied</p>
+<p class="text-2xl font-bold">28</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border-l-4 border-black">
+<p class="mono-label text-black mb-1 uppercase">Losing</p>
+<p class="text-2xl font-bold">42</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="mono-label text-neutral-500 mb-1 uppercase">Missing</p>
+<p class="text-2xl font-bold">11</p>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-neutral-100/50">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-neutral-100">
+<th class="px-6 py-4 mono-label text-neutral-500 font-medium">TOPIC</th>
+<th class="px-6 py-4 mono-label text-neutral-500 font-medium">STRATEGIC IMPORTANCE</th>
+<th class="px-6 py-4 mono-label text-neutral-500 font-medium">COMPETITOR STRENGTH</th>
+<th class="px-6 py-4 mono-label text-neutral-500 font-medium">SUGGESTED FORMAT</th>
+<th class="px-6 py-4 mono-label text-neutral-500 font-medium text-right">EXPECTED UPSIDE</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-neutral-50">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-semibold text-sm group-hover:text-primary">Generative AI Governance</span>
+<span class="mono-label text-[10px] text-neutral-400 mt-1 uppercase">Status: Losing</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-black text-white mono-label">HIGH</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5">
+<div class="w-24 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 85%;"></div>
+</div>
+<span class="mono-label text-[10px]">85%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="mono-label text-xs">Technical Whitepaper</span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="font-bold text-sm text-green-600">+12.4k</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer bg-neutral-50/30">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-semibold text-sm group-hover:text-primary">Cloud-Native Compliance</span>
+<span class="mono-label text-[10px] text-neutral-400 mt-1 uppercase">Status: Missing</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded border border-neutral-300 text-neutral-600 mono-label">MED</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5">
+<div class="w-24 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 60%;"></div>
+</div>
+<span class="mono-label text-[10px]">60%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="mono-label text-xs">Comparison Guide</span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="font-bold text-sm text-green-600">+8.1k</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-semibold text-sm group-hover:text-primary">Zero Trust Infrastructure</span>
+<span class="mono-label text-[10px] text-neutral-400 mt-1 uppercase">Status: Losing</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-black text-white mono-label">HIGH</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5">
+<div class="w-24 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 92%;"></div>
+</div>
+<span class="mono-label text-[10px]">92%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="mono-label text-xs">Expert Round-up</span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="font-bold text-sm text-green-600">+15.2k</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer bg-neutral-50/30">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-semibold text-sm group-hover:text-primary">Edge Computing Security</span>
+<span class="mono-label text-[10px] text-neutral-400 mt-1 uppercase">Status: Missing</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded border border-neutral-300 text-neutral-600 mono-label">LOW</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5">
+<div class="w-24 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 45%;"></div>
+</div>
+<span class="mono-label text-[10px]">45%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="mono-label text-xs">Blog Series</span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="font-bold text-sm text-green-600">+3.4k</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty State (Hidden) -->
+<div class="hidden flex-1 flex flex-col items-center justify-center py-24 text-center">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-neutral-400" style="font-size: 32px;">inbox_customize</span>
+</div>
+<h3 class="text-xl font-bold">No topic gaps found</h3>
+<p class="text-neutral-500 max-w-xs mt-2">Adjust your competitor list or run a new audit to identify content opportunities.</p>
+<button class="mt-6 bg-primary text-white px-6 py-2 rounded font-semibold text-sm">Scan New Competitor</button>
+</div>
+</div>
+<!-- Right: Detail View Panel -->
+<aside class="w-96 flex flex-col gap-6 shrink-0">
+<div class="bg-surface-container-low p-6 rounded-xl border border-neutral-100">
+<div class="flex items-center justify-between mb-6">
+<span class="mono-label uppercase text-neutral-500">Analysis Details</span>
+<button class="text-neutral-400 hover:text-black">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<h3 class="text-xl font-bold leading-tight mb-2">Generative AI Governance</h3>
+<div class="flex gap-2 mb-8">
+<span class="bg-black text-white text-[10px] mono-label px-2 py-0.5 rounded">HIGH PRIORITY</span>
+<span class="bg-surface-container-high text-neutral-600 text-[10px] mono-label px-2 py-0.5 rounded">LOSING</span>
+</div>
+<div class="space-y-6">
+<div>
+<p class="mono-label text-[10px] text-neutral-500 mb-3 uppercase">Primary Competitor Lead</p>
+<div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-neutral-100">
+<img alt="Competitor A" class="w-10 h-10 rounded" data-alt="Modern tech company logo with abstract geometric shape in royal blue and white colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhkNVAuEUfXxvExwufU5qDXarGqQe-rBFixglUpvaGb2ynUYIgpTcJLomZ7TFKDk3NHeEuH4r0Ct5AcEe_Nxzsmqlbyv2gVQLtA3PEuuwlTIslYDBq3I0jxL3_uYWAlMJ9eVXRzl_SUKBuRG9HGkNn568S_f1_zdS8bzEx3yxZtthyAEKiOqo53Sg0RvAiD_GLo1oUa-9Th4jy3NndakKeMDkO0-4ST_ij_MqJW34xjnqnvHRD6fv6OD5D7TTpdAll0I_agpVd4Mo"/>
+<div>
+<p class="text-sm font-bold">Infraserve AI</p>
+<p class="text-[10px] mono-label text-neutral-400">Position 1-3 (Ranked 1.2 avg)</p>
+</div>
+</div>
+</div>
+<div>
+<p class="mono-label text-[10px] text-neutral-500 mb-3 uppercase">Market Sentiment</p>
+<div class="h-40 bg-white rounded-lg border border-neutral-100 p-4 flex flex-col justify-end gap-2">
+<div class="flex items-end gap-2 h-full">
+<div class="bg-neutral-100 w-full h-[40%] rounded-t-sm"></div>
+<div class="bg-neutral-200 w-full h-[60%] rounded-t-sm"></div>
+<div class="bg-neutral-300 w-full h-[55%] rounded-t-sm"></div>
+<div class="bg-primary w-full h-[85%] rounded-t-sm"></div>
+<div class="bg-neutral-400 w-full h-[70%] rounded-t-sm"></div>
+<div class="bg-neutral-200 w-full h-[45%] rounded-t-sm"></div>
+</div>
+<div class="flex justify-between text-[9px] mono-label text-neutral-400 mt-2">
+<span>JAN</span><span>MAR</span><span>MAY</span><span>JUL</span><span>SEP</span><span>NOV</span>
+</div>
+</div>
+</div>
+<div>
+<p class="mono-label text-[10px] text-neutral-500 mb-3 uppercase">Recommended Action</p>
+<div class="p-4 bg-primary text-white rounded-lg">
+<p class="text-xs leading-relaxed mb-4">Competitor is dominating with deep-dive technical papers. Counter with a "Governance Matrix" interactive tool and a 3,000-word comprehensive guide.</p>
+<button class="w-full bg-white text-black py-2 rounded text-[11px] font-bold uppercase tracking-wider transition-transform active:scale-95">
+                                    Create Content Brief
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-neutral-100 p-4 rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-neutral-400">auto_awesome</span>
+<div>
+<p class="text-xs font-bold">AI Insight</p>
+<p class="text-[10px] text-neutral-500 mt-1">This gap represents 45% of your total potential traffic loss this quarter.</p>
+</div>
+</div>
+</div>
+</aside>
+</main>
+</div>
+</body></html>
