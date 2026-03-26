@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .mono-label {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .pulse-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10b981;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .4; transform: scale(0.9); }
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 0%, rgba(24, 24, 27, 0.03) 0%, transparent 70%);
+        }
+        .dashboard-frame {
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 20px 50px -12px rgba(0,0,0,0.1);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0F0F10",
+                        "on-primary": "#ffffff",
+                        "surface": "#ffffff",
+                        "on-surface": "#0F0F10",
+                        "surface-container": "#F9F9FA",
+                        "surface-container-high": "#F0F1F2",
+                        "outline-variant": "#E2E2E3",
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Navigation -->
+<header class="w-full top-0 sticky z-50 bg-white/80 backdrop-blur-md border-b border-outline-variant/50">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="text-xl font-bold tracking-tighter">bVisible</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-black/60 transition-colors" href="#">Product</a>
+<a class="text-sm font-medium hover:text-black/60 transition-colors" href="#">Pricing</a>
+<a class="text-sm font-medium hover:text-black/60 transition-colors" href="#">Documentation</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-sm font-medium hover:text-black/60 transition-colors px-4">Log in</button>
+<button class="bg-primary text-on-primary px-4 py-2 rounded text-sm font-medium hover:opacity-90 transition-all active:scale-95">
+                Start Audit
+            </button>
+</div>
+</div>
+</header>
+<main>
+<!-- Centered Hero Section -->
+<section class="relative pt-24 pb-16 hero-gradient overflow-hidden">
+<div class="max-w-4xl mx-auto px-6 text-center">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-outline-variant bg-white mb-8">
+<span class="pulse-indicator"></span>
+<span class="mono-label text-[10px]">System Operational: 14 LLMs Tracked</span>
+</div>
+<h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-primary mb-8 leading-[1.05]">
+                Track how AI models <br class="hidden md:block"/> see your brand.
+            </h1>
+<p class="text-lg md:text-xl text-neutral-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+                The visibility layer for the agentic web. Surface where you appear, what content gets cited, and where competitors lead in AI synthesis.
+            </p>
+<div class="flex justify-center">
+<button class="px-8 py-4 bg-primary text-on-primary font-bold rounded-lg transition-all active:scale-95 hover:shadow-lg hover:-translate-y-0.5">
+                    Start Audit
+                </button>
+</div>
+</div>
+</section>
+<!-- Dashboard Preview Section -->
+<section class="max-w-6xl mx-auto px-6 pb-24">
+<div class="dashboard-frame rounded-2xl bg-neutral-50 border border-outline-variant overflow-hidden">
+<!-- Mock Dashboard UI Header -->
+<div class="flex items-center justify-between px-6 py-4 bg-white border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-neutral-200"></div>
+<div class="w-3 h-3 rounded-full bg-neutral-200"></div>
+<div class="w-3 h-3 rounded-full bg-neutral-200"></div>
+<div class="h-4 w-32 bg-neutral-100 rounded ml-4"></div>
+</div>
+<div class="flex gap-2">
+<div class="h-8 w-24 bg-neutral-50 border border-outline-variant rounded"></div>
+<div class="h-8 w-8 bg-primary rounded"></div>
+</div>
+</div>
+<!-- Dashboard Content Mock -->
+<div class="p-8 space-y-8">
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-white p-6 rounded-xl border border-outline-variant/50">
+<div class="mono-label text-[9px] text-neutral-400 mb-2">Visibility</div>
+<div class="text-2xl font-bold">84.2%</div>
+<div class="h-1 w-full bg-neutral-100 mt-4 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[84%]"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant/50">
+<div class="mono-label text-[9px] text-neutral-400 mb-2">Sentiment</div>
+<div class="text-2xl font-bold">Strongly Pos.</div>
+<div class="text-[10px] text-emerald-600 font-medium mt-1">+12.4% vs last mo</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant/50">
+<div class="mono-label text-[9px] text-neutral-400 mb-2">Citations</div>
+<div class="text-2xl font-bold">12.5x</div>
+<div class="text-[10px] text-neutral-400 mt-1">Avg per 1k queries</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant/50">
+<div class="mono-label text-[9px] text-neutral-400 mb-2">Topic Gap</div>
+<div class="text-2xl font-bold">-14%</div>
+<div class="text-[10px] text-red-500 font-medium mt-1">Action Required</div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-6">
+<div class="col-span-2 bg-white p-6 rounded-xl border border-outline-variant/50 h-64 relative">
+<div class="flex justify-between mb-8">
+<div class="font-bold">Model Prominence Matrix</div>
+<div class="mono-label text-neutral-400">GPT-4, Claude-3, Gemini</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-20 text-[10px] mono-label">GPT-4o</div>
+<div class="flex-1 h-3 bg-neutral-50 rounded-full overflow-hidden flex">
+<div class="h-full bg-primary w-[88%]"></div>
+</div>
+<div class="w-10 text-[10px] font-bold">88%</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-20 text-[10px] mono-label">Claude 3</div>
+<div class="flex-1 h-3 bg-neutral-50 rounded-full overflow-hidden flex">
+<div class="h-full bg-primary w-[74%]"></div>
+</div>
+<div class="w-10 text-[10px] font-bold">74%</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-20 text-[10px] mono-label">Gemini</div>
+<div class="flex-1 h-3 bg-neutral-50 rounded-full overflow-hidden flex">
+<div class="h-full bg-primary w-[42%]"></div>
+</div>
+<div class="w-10 text-[10px] font-bold">42%</div>
+</div>
+</div>
+</div>
+<div class="bg-primary p-6 rounded-xl text-on-primary">
+<div class="font-bold mb-4">Narrative Audit</div>
+<div class="space-y-4">
+<div>
+<div class="text-[10px] opacity-60 mono-label mb-1">Sentiment Driver</div>
+<div class="text-sm font-medium italic">"Reliable scaling partner"</div>
+</div>
+<div>
+<div class="text-[10px] opacity-60 mono-label mb-1">Top Association</div>
+<div class="text-sm font-medium">Enterprise Security</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Key Features Section -->
+<section class="py-24 bg-surface-container">
+<div class="max-w-7xl mx-auto px-6">
+<div class="text-center mb-20">
+<h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">Turn AI Visibility into your unfair advantage</h2>
+<p class="text-neutral-500 max-w-2xl mx-auto">Move from guessing how LLMs see you to surgical narrative management.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="group">
+<div class="h-64 bg-white rounded-2xl border border-outline-variant mb-6 overflow-hidden p-6 transition-all hover:shadow-md">
+<span class="material-symbols-outlined text-4xl mb-4 text-primary" data-icon="hub">hub</span>
+<h3 class="text-xl font-bold mb-3">Understand LLM Synthesis</h3>
+<p class="text-sm text-neutral-500 leading-relaxed">Trace the lineage of how models arrive at brand descriptions. Identify which datasets influence your visibility most.</p>
+</div>
+</div>
+<div class="group">
+<div class="h-64 bg-white rounded-2xl border border-outline-variant mb-6 overflow-hidden p-6 transition-all hover:shadow-md">
+<span class="material-symbols-outlined text-4xl mb-4 text-primary" data-icon="troubleshoot">troubleshoot</span>
+<h3 class="text-xl font-bold mb-3">Close the Topic Gap</h3>
+<p class="text-sm text-neutral-500 leading-relaxed">Pinpoint high-intent clusters where competitors lead. Deploy content strategies specifically designed for model training pipelines.</p>
+</div>
+</div>
+<div class="group">
+<div class="h-64 bg-white rounded-2xl border border-outline-variant mb-6 overflow-hidden p-6 transition-all hover:shadow-md">
+<span class="material-symbols-outlined text-4xl mb-4 text-primary" data-icon="verified">verified</span>
+<h3 class="text-xl font-bold mb-3">Verify Citation Accuracy</h3>
+<p class="text-sm text-neutral-500 leading-relaxed">Monitor and correct model hallucinations in real-time. Ensure your official documentation is the primary source of truth.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- The Informed Void / Philosophy Section -->
+<!-- CTA Section -->
+<section class="py-32 bg-primary text-on-primary">
+<div class="max-w-4xl mx-auto px-6 text-center">
+<h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-8">Ready to audit your visibility?</h2>
+<p class="text-white/60 text-lg mb-12 max-w-xl mx-auto">
+                Join forward-thinking growth teams who have moved beyond traditional search and into the AI synthesis era.
+            </p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button class="bg-white text-black px-10 py-4 rounded-lg font-bold text-lg hover:bg-neutral-100 transition-all active:scale-95 shadow-xl shadow-white/5">
+                    Start Audit
+                </button>
+<button class="bg-transparent border border-white/20 text-on-primary px-10 py-4 rounded-lg font-bold text-lg hover:bg-white/5 transition-colors active:scale-95">
+                    Contact Sales
+                </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-16 border-t border-outline-variant bg-white text-on-surface">
+<div class="max-w-7xl mx-auto px-6">
+<div class="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
+<div class="space-y-4">
+<div class="font-bold text-xl tracking-tighter">bVisible</div>
+<p class="text-neutral-400 text-sm max-w-xs">Mission Control for AI Visibility. Deconstructing the synthesis of the next web.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-16 uppercase mono-label text-[10px] text-neutral-400">
+<div class="flex flex-col gap-4">
+<span class="text-on-surface font-bold">Product</span>
+<a class="hover:text-black transition-colors" href="#">Features</a>
+<a class="hover:text-black transition-colors" href="#">Pricing</a>
+<a class="hover:text-black transition-colors" href="#">API</a>
+</div>
+<div class="flex flex-col gap-4">
+<span class="text-on-surface font-bold">Company</span>
+<a class="hover:text-black transition-colors" href="#">About</a>
+<a class="hover:text-black transition-colors" href="#">Blog</a>
+<a class="hover:text-black transition-colors" href="#">Careers</a>
+</div>
+<div class="flex flex-col gap-4">
+<span class="text-on-surface font-bold">Legal</span>
+<a class="hover:text-black transition-colors" href="#">Privacy</a>
+<a class="hover:text-black transition-colors" href="#">Terms</a>
+<a class="hover:text-black transition-colors" href="#">Cookie Policy</a>
+</div>
+</div>
+</div>
+<div class="pt-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-400">
+<div>© 2026 bVisible. All rights reserved.</div>
+<div class="flex gap-6">
+<a class="hover:text-black transition-colors" href="#">Twitter</a>
+<a class="hover:text-black transition-colors" href="#">LinkedIn</a>
+<a class="hover:text-black transition-colors" href="#">GitHub</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useWorkspaceConfig } from "@/hooks/use-workspace";
 import { AppLayout } from "@/components/AppLayout";
 
+import LandingPage from "@/pages/landing";
 import SetupPage from "@/pages/setup";
 import DashboardPage from "@/pages/dashboard";
 import PromptsPage from "@/pages/prompts";
@@ -18,32 +19,31 @@ import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
-// Auth/Setup guard component
-function RootRedirect() {
+function AppRedirect() {
   const { data: workspace, isLoading, error } = useWorkspaceConfig();
 
   if (isLoading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-background">
-        <div className="animate-pulse-ring w-8 h-8 rounded-full bg-emerald-500"></div>
+        <div className="w-8 h-8 rounded-full bg-emerald-500 animate-pulse" />
       </div>
     );
   }
 
-  // If we have a 404 or no data, redirect to setup
   if (error || !workspace) {
     return <Redirect to="/setup" />;
   }
 
-  // Otherwise workspace is configured, go to dashboard
   return <Redirect to="/dashboard" />;
 }
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={RootRedirect} />
-      
+      <Route path="/" component={LandingPage} />
+
+      <Route path="/app" component={AppRedirect} />
+
       <Route path="/setup">
         <AppLayout><SetupPage /></AppLayout>
       </Route>
