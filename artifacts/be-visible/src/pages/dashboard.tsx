@@ -31,9 +31,13 @@ const MODELS = [
   },
 ];
 
-const BAR_HEIGHTS = [20, 25, 32, 28, 45, 55, 50, 62, 75, 82, 68, 72, 88, 95, 80];
-const BAR_DATES = ["01 Oct", "15 Oct", "Today"];
-const HIGHLIGHTED = [5, 9, 13];
+const BAR_HEIGHTS = [
+  18, 22, 28, 25, 32, 30, 38, 35, 42, 40,
+  48, 45, 52, 50, 58, 55, 62, 60, 68, 72,
+  75, 70, 78, 82, 76, 85, 88, 92, 95, 80,
+];
+const BAR_DATES = ["01 Oct", "08 Oct", "15 Oct", "22 Oct", "Today"];
+const HIGHLIGHTED = [9, 18, 27];
 
 function MetricStrip() {
   const metrics = [
