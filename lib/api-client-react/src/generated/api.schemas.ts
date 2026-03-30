@@ -10,19 +10,12 @@ export interface HealthStatus {
 }
 
 export interface WorkspaceSetupInput {
-  /** The brand or company name */
   brandName: string;
-  /** The primary website URL */
   websiteUrl: string;
-  /** First competitor domain URL */
   competitor1Url?: string;
-  /** Second competitor domain URL */
   competitor2Url?: string;
-  /** Third competitor domain URL */
   competitor3Url?: string;
-  /** Target region/language (e.g. "us-en") */
   region?: string;
-  /** Comma-separated list of product/service categories */
   productCategories?: string;
 }
 
@@ -43,3 +36,409 @@ export interface ErrorResponse {
   error: string;
   message: string;
 }
+
+export type KpiCardTrend = (typeof KpiCardTrend)[keyof typeof KpiCardTrend];
+
+export const KpiCardTrend = {
+  up: "up",
+  down: "down",
+  flat: "flat",
+} as const;
+
+export interface KpiCard {
+  label: string;
+  value: string;
+  change: string;
+  trend: KpiCardTrend;
+}
+
+export interface PlatformRate {
+  platform: string;
+  rate: number;
+}
+
+export interface CompetitorRank {
+  rank: number;
+  name: string;
+  value: string;
+  change: string;
+  isYou: boolean;
+}
+
+export interface TimeSeriesPoint {
+  date: string;
+  value: number;
+}
+
+export interface NamedTimeSeries {
+  name: string;
+  data: TimeSeriesPoint[];
+}
+
+export interface HeatmapCell {
+  row: string;
+  col: string;
+  value: number;
+}
+
+export type TopicBarBrandsItem = {
+  name: string;
+  value: number;
+  isYou: boolean;
+};
+
+export interface TopicBar {
+  topic: string;
+  brands: TopicBarBrandsItem[];
+}
+
+export interface OverviewData {
+  kpis: KpiCard[];
+  platforms: PlatformRate[];
+  competitors: CompetitorRank[];
+  answerCount: number;
+}
+
+export interface VisibilityData {
+  kpis: KpiCard[];
+  mentionRateSeries: TimeSeriesPoint[];
+  mentionRateLeaderboard: CompetitorRank[];
+  sovSeries: TimeSeriesPoint[];
+  sovLeaderboard: CompetitorRank[];
+  positionSeries: TimeSeriesPoint[];
+  positionLeaderboard: CompetitorRank[];
+  topicBars: TopicBar[];
+  heatmap: HeatmapCell[];
+}
+
+export type CitationsAnalyticsDataDomainCategoriesItem = {
+  category: string;
+  share: number;
+  color: string;
+};
+
+export type CitationsAnalyticsDataTopDomainsItem = {
+  rank: number;
+  domain: string;
+  pctOfTotal: number;
+  citations: number;
+};
+
+export type CitationsAnalyticsDataTopUrlsItem = {
+  rank: number;
+  url: string;
+  pctOfTotal: number;
+  citations: number;
+};
+
+export interface CitationsAnalyticsData {
+  kpis: KpiCard[];
+  domainCategories: CitationsAnalyticsDataDomainCategoriesItem[];
+  citationRateSeries: TimeSeriesPoint[];
+  domainTrends: NamedTimeSeries[];
+  competitorTrends: NamedTimeSeries[];
+  topDomains: CitationsAnalyticsDataTopDomainsItem[];
+  topUrls: CitationsAnalyticsDataTopUrlsItem[];
+  heatmap: HeatmapCell[];
+}
+
+export type CommunityDataSubredditsItem = {
+  name: string;
+  rate: number;
+};
+
+export type CommunityDataTopUrlsItem = {
+  rank: number;
+  url: string;
+  citations: number;
+  change: string;
+};
+
+export interface CommunityData {
+  kpis: KpiCard[];
+  subreddits: CommunityDataSubredditsItem[];
+  topUrls: CommunityDataTopUrlsItem[];
+}
+
+export interface SentimentThemeRecord {
+  id: number;
+  theme: string;
+  sentimentScore: number;
+  volumePct: number;
+  occurrences: number;
+  isPositive: boolean;
+  exampleText?: string | null;
+}
+
+export type SentimentDataTreemapPositiveItem = {
+  theme: string;
+  occurrences: number;
+};
+
+export type SentimentDataTreemapNegativeItem = {
+  theme: string;
+  occurrences: number;
+};
+
+export interface SentimentData {
+  kpis: KpiCard[];
+  scoreSeries: TimeSeriesPoint[];
+  themes: SentimentThemeRecord[];
+  treemapPositive: SentimentDataTreemapPositiveItem[];
+  treemapNegative: SentimentDataTreemapNegativeItem[];
+}
+
+export type OpportunitiesDataContentGapsItem = {
+  prompt: string;
+  yourRate: number;
+  topCompetitor: string;
+  theirRate: number;
+  suggestedAction: string;
+};
+
+export type OpportunitiesDataOffsitePlacementsItem = {
+  url: string;
+  influence: number;
+  citations: number;
+  domainType: string;
+  da: number;
+  topics: string;
+  competitors: string;
+  action: string;
+};
+
+export interface OpportunitiesData {
+  kpis: KpiCard[];
+  contentGaps: OpportunitiesDataContentGapsItem[];
+  offsitePlacements: OpportunitiesDataOffsitePlacementsItem[];
+}
+
+export interface PromptRecord {
+  id: number;
+  text: string;
+  topicName?: string | null;
+  topicColor?: string | null;
+  tags?: string[] | null;
+  fanoutCount: number;
+  type: string;
+  searchVolume?: number | null;
+  mentionRate: number;
+  mentionRateChange: number;
+  citationRate: number;
+  citationRateChange: number;
+}
+
+export interface PromptsListData {
+  items: PromptRecord[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface PageRecord {
+  id: number;
+  url: string;
+  folder: string;
+  primaryKeyword?: string | null;
+  clicks: number;
+  clicksChange: number;
+  impressions: number;
+  impressionsChange: number;
+  position: number;
+  positionChange: number;
+  ctr: number;
+  ctrChange: number;
+  citationCount: number;
+  citationCountChange: number;
+  citationRate: number;
+  citationRateChange: number;
+}
+
+export interface PagesListData {
+  items: PageRecord[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface CitationRecord {
+  id: number;
+  url: string;
+  domain: string;
+  domainType: string;
+  pageType?: string | null;
+  influenceScore: number;
+  domainAuthority?: number | null;
+  hasBrandReference: boolean;
+  competitorReferences?: string[] | null;
+  citations: number;
+}
+
+export interface CitationsListData {
+  items: CitationRecord[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface ReportInput {
+  name: string;
+  dateRange?: string;
+  schedule?: string;
+  format?: string;
+  sections?: string[];
+  recipients?: string;
+}
+
+export interface ReportRecord {
+  id: number;
+  name: string;
+  dateRange: string;
+  schedule: string;
+  format: string;
+  sections?: string[] | null;
+  recipients?: string | null;
+  lastGeneratedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReportsListData {
+  items: ReportRecord[];
+}
+
+export interface FilterOptions {
+  platforms: string[];
+  topics: string[];
+  competitors: string[];
+  regions: string[];
+  personas: string[];
+}
+
+export type DateRangeParameter =
+  (typeof DateRangeParameter)[keyof typeof DateRangeParameter];
+
+export const DateRangeParameter = {
+  "7d": "7d",
+  "14d": "14d",
+  "30d": "30d",
+  "90d": "90d",
+} as const;
+
+export type PlatformParameter = string;
+
+export type TopicParameter = string;
+
+export type CompetitorParameter = string;
+
+export type RegionParameter = string;
+
+export type GetOverviewParams = {
+  dateRange?: DateRangeParameter;
+  platform?: PlatformParameter;
+  topic?: TopicParameter;
+  competitor?: CompetitorParameter;
+  region?: RegionParameter;
+};
+
+export type GetVisibilityParams = {
+  dateRange?: DateRangeParameter;
+  platform?: PlatformParameter;
+  topic?: TopicParameter;
+  competitor?: CompetitorParameter;
+  region?: RegionParameter;
+};
+
+export type GetCitationsAnalyticsParams = {
+  dateRange?: DateRangeParameter;
+  platform?: PlatformParameter;
+  topic?: TopicParameter;
+  competitor?: CompetitorParameter;
+  region?: RegionParameter;
+};
+
+export type GetCommunityParams = {
+  dateRange?: DateRangeParameter;
+  region?: RegionParameter;
+};
+
+export type GetSentimentParams = {
+  dateRange?: DateRangeParameter;
+  platform?: PlatformParameter;
+  topic?: TopicParameter;
+  region?: RegionParameter;
+  sentimentFilter?: GetSentimentSentimentFilter;
+};
+
+export type GetSentimentSentimentFilter =
+  (typeof GetSentimentSentimentFilter)[keyof typeof GetSentimentSentimentFilter];
+
+export const GetSentimentSentimentFilter = {
+  all: "all",
+  positive: "positive",
+  negative: "negative",
+} as const;
+
+export type GetOpportunitiesParams = {
+  dateRange?: DateRangeParameter;
+  platform?: PlatformParameter;
+  topic?: TopicParameter;
+  region?: RegionParameter;
+};
+
+export type GetPromptsParams = {
+  dateRange?: DateRangeParameter;
+  platform?: PlatformParameter;
+  topic?: TopicParameter;
+  region?: RegionParameter;
+  page?: number;
+  limit?: number;
+  sort?: string;
+  search?: string;
+  view?: GetPromptsView;
+};
+
+export type GetPromptsView =
+  (typeof GetPromptsView)[keyof typeof GetPromptsView];
+
+export const GetPromptsView = {
+  prompt: "prompt",
+  topic: "topic",
+} as const;
+
+export type GetPagesParams = {
+  dateRange?: DateRangeParameter;
+  region?: RegionParameter;
+  page?: number;
+  limit?: number;
+  sort?: string;
+  search?: string;
+  view?: GetPagesView;
+};
+
+export type GetPagesView = (typeof GetPagesView)[keyof typeof GetPagesView];
+
+export const GetPagesView = {
+  page: "page",
+  folder: "folder",
+} as const;
+
+export type GetCitationsParams = {
+  dateRange?: DateRangeParameter;
+  platform?: PlatformParameter;
+  topic?: TopicParameter;
+  region?: RegionParameter;
+  page?: number;
+  limit?: number;
+  sort?: string;
+  search?: string;
+  view?: GetCitationsView;
+};
+
+export type GetCitationsView =
+  (typeof GetCitationsView)[keyof typeof GetCitationsView];
+
+export const GetCitationsView = {
+  url: "url",
+  domain: "domain",
+} as const;

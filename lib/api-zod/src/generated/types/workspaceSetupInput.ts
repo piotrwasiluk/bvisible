@@ -7,18 +7,11 @@
  */
 
 export interface WorkspaceSetupInput {
-  /** The brand or company name */
   brandName: string;
-  /** The primary website URL */
   websiteUrl: string;
-  /** First competitor domain URL */
   competitor1Url?: string;
-  /** Second competitor domain URL */
   competitor2Url?: string;
-  /** Third competitor domain URL */
   competitor3Url?: string;
-  /** Target region/language (e.g. "us-en") */
   region?: string;
-  /** Comma-separated list of product/service categories */
   productCategories?: string;
 }

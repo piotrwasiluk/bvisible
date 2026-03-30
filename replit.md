@@ -109,13 +109,14 @@ React + Vite front-end for the **bVisible** AEO monitoring tool. Built with Tail
 
 ## API Routes
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/healthz` | Health check |
-| GET | `/api/workspace` | Get configured workspace (404 if none) |
-| POST | `/api/workspace` | Create or update workspace (upsert pattern, row id=1) |
+| Method | Path             | Description                                           |
+| ------ | ---------------- | ----------------------------------------------------- |
+| GET    | `/api/healthz`   | Health check                                          |
+| GET    | `/api/workspace` | Get configured workspace (404 if none)                |
+| POST   | `/api/workspace` | Create or update workspace (upsert pattern, row id=1) |
 
 ## Database Schema
 
 ### `workspaces` table
+
 One row at most (id=1). Stores brand identity, competitors, region, and product categories for the workspace.

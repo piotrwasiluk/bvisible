@@ -21,28 +21,13 @@ export const HealthCheckResponse = zod.object({
 export const createWorkspaceBodyRegionDefault = `us-en`;
 
 export const CreateWorkspaceBody = zod.object({
-  brandName: zod.string().describe("The brand or company name"),
-  websiteUrl: zod.string().describe("The primary website URL"),
-  competitor1Url: zod
-    .string()
-    .optional()
-    .describe("First competitor domain URL"),
-  competitor2Url: zod
-    .string()
-    .optional()
-    .describe("Second competitor domain URL"),
-  competitor3Url: zod
-    .string()
-    .optional()
-    .describe("Third competitor domain URL"),
-  region: zod
-    .string()
-    .default(createWorkspaceBodyRegionDefault)
-    .describe('Target region\/language (e.g. \"us-en\")'),
-  productCategories: zod
-    .string()
-    .optional()
-    .describe("Comma-separated list of product\/service categories"),
+  brandName: zod.string(),
+  websiteUrl: zod.string(),
+  competitor1Url: zod.string().optional(),
+  competitor2Url: zod.string().optional(),
+  competitor3Url: zod.string().optional(),
+  region: zod.string().default(createWorkspaceBodyRegionDefault),
+  productCategories: zod.string().optional(),
 });
 
 /**
@@ -59,4 +44,536 @@ export const GetWorkspaceResponse = zod.object({
   productCategories: zod.string().nullish(),
   createdAt: zod.date(),
   updatedAt: zod.date(),
+});
+
+/**
+ * @summary Overview dashboard data
+ */
+export const getOverviewQueryDateRangeDefault = `7d`;
+
+export const GetOverviewQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getOverviewQueryDateRangeDefault),
+  platform: zod.coerce.string().optional(),
+  topic: zod.coerce.string().optional(),
+  competitor: zod.coerce.string().optional(),
+  region: zod.coerce.string().optional(),
+});
+
+export const GetOverviewResponse = zod.object({
+  kpis: zod.array(
+    zod.object({
+      label: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      trend: zod.enum(["up", "down", "flat"]),
+    }),
+  ),
+  platforms: zod.array(
+    zod.object({
+      platform: zod.string(),
+      rate: zod.number(),
+    }),
+  ),
+  competitors: zod.array(
+    zod.object({
+      rank: zod.number(),
+      name: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      isYou: zod.boolean(),
+    }),
+  ),
+  answerCount: zod.number(),
+});
+
+/**
+ * @summary Visibility metrics with time series and leaderboards
+ */
+export const getVisibilityQueryDateRangeDefault = `7d`;
+
+export const GetVisibilityQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getVisibilityQueryDateRangeDefault),
+  platform: zod.coerce.string().optional(),
+  topic: zod.coerce.string().optional(),
+  competitor: zod.coerce.string().optional(),
+  region: zod.coerce.string().optional(),
+});
+
+export const GetVisibilityResponse = zod.object({
+  kpis: zod.array(
+    zod.object({
+      label: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      trend: zod.enum(["up", "down", "flat"]),
+    }),
+  ),
+  mentionRateSeries: zod.array(
+    zod.object({
+      date: zod.string(),
+      value: zod.number(),
+    }),
+  ),
+  mentionRateLeaderboard: zod.array(
+    zod.object({
+      rank: zod.number(),
+      name: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      isYou: zod.boolean(),
+    }),
+  ),
+  sovSeries: zod.array(
+    zod.object({
+      date: zod.string(),
+      value: zod.number(),
+    }),
+  ),
+  sovLeaderboard: zod.array(
+    zod.object({
+      rank: zod.number(),
+      name: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      isYou: zod.boolean(),
+    }),
+  ),
+  positionSeries: zod.array(
+    zod.object({
+      date: zod.string(),
+      value: zod.number(),
+    }),
+  ),
+  positionLeaderboard: zod.array(
+    zod.object({
+      rank: zod.number(),
+      name: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      isYou: zod.boolean(),
+    }),
+  ),
+  topicBars: zod.array(
+    zod.object({
+      topic: zod.string(),
+      brands: zod.array(
+        zod.object({
+          name: zod.string(),
+          value: zod.number(),
+          isYou: zod.boolean(),
+        }),
+      ),
+    }),
+  ),
+  heatmap: zod.array(
+    zod.object({
+      row: zod.string(),
+      col: zod.string(),
+      value: zod.number(),
+    }),
+  ),
+});
+
+/**
+ * @summary Citations analytics with charts and tables
+ */
+export const getCitationsAnalyticsQueryDateRangeDefault = `7d`;
+
+export const GetCitationsAnalyticsQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getCitationsAnalyticsQueryDateRangeDefault),
+  platform: zod.coerce.string().optional(),
+  topic: zod.coerce.string().optional(),
+  competitor: zod.coerce.string().optional(),
+  region: zod.coerce.string().optional(),
+});
+
+export const GetCitationsAnalyticsResponse = zod.object({
+  kpis: zod.array(
+    zod.object({
+      label: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      trend: zod.enum(["up", "down", "flat"]),
+    }),
+  ),
+  domainCategories: zod.array(
+    zod.object({
+      category: zod.string(),
+      share: zod.number(),
+      color: zod.string(),
+    }),
+  ),
+  citationRateSeries: zod.array(
+    zod.object({
+      date: zod.string(),
+      value: zod.number(),
+    }),
+  ),
+  domainTrends: zod.array(
+    zod.object({
+      name: zod.string(),
+      data: zod.array(
+        zod.object({
+          date: zod.string(),
+          value: zod.number(),
+        }),
+      ),
+    }),
+  ),
+  competitorTrends: zod.array(
+    zod.object({
+      name: zod.string(),
+      data: zod.array(
+        zod.object({
+          date: zod.string(),
+          value: zod.number(),
+        }),
+      ),
+    }),
+  ),
+  topDomains: zod.array(
+    zod.object({
+      rank: zod.number(),
+      domain: zod.string(),
+      pctOfTotal: zod.number(),
+      citations: zod.number(),
+    }),
+  ),
+  topUrls: zod.array(
+    zod.object({
+      rank: zod.number(),
+      url: zod.string(),
+      pctOfTotal: zod.number(),
+      citations: zod.number(),
+    }),
+  ),
+  heatmap: zod.array(
+    zod.object({
+      row: zod.string(),
+      col: zod.string(),
+      value: zod.number(),
+    }),
+  ),
+});
+
+/**
+ * @summary Community/Reddit analytics
+ */
+export const getCommunityQueryDateRangeDefault = `7d`;
+
+export const GetCommunityQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getCommunityQueryDateRangeDefault),
+  region: zod.coerce.string().optional(),
+});
+
+export const GetCommunityResponse = zod.object({
+  kpis: zod.array(
+    zod.object({
+      label: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      trend: zod.enum(["up", "down", "flat"]),
+    }),
+  ),
+  subreddits: zod.array(
+    zod.object({
+      name: zod.string(),
+      rate: zod.number(),
+    }),
+  ),
+  topUrls: zod.array(
+    zod.object({
+      rank: zod.number(),
+      url: zod.string(),
+      citations: zod.number(),
+      change: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * @summary Sentiment analysis data
+ */
+export const getSentimentQueryDateRangeDefault = `7d`;
+export const getSentimentQuerySentimentFilterDefault = `all`;
+
+export const GetSentimentQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getSentimentQueryDateRangeDefault),
+  platform: zod.coerce.string().optional(),
+  topic: zod.coerce.string().optional(),
+  region: zod.coerce.string().optional(),
+  sentimentFilter: zod
+    .enum(["all", "positive", "negative"])
+    .default(getSentimentQuerySentimentFilterDefault),
+});
+
+export const GetSentimentResponse = zod.object({
+  kpis: zod.array(
+    zod.object({
+      label: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      trend: zod.enum(["up", "down", "flat"]),
+    }),
+  ),
+  scoreSeries: zod.array(
+    zod.object({
+      date: zod.string(),
+      value: zod.number(),
+    }),
+  ),
+  themes: zod.array(
+    zod.object({
+      id: zod.number(),
+      theme: zod.string(),
+      sentimentScore: zod.number(),
+      volumePct: zod.number(),
+      occurrences: zod.number(),
+      isPositive: zod.boolean(),
+      exampleText: zod.string().nullish(),
+    }),
+  ),
+  treemapPositive: zod.array(
+    zod.object({
+      theme: zod.string(),
+      occurrences: zod.number(),
+    }),
+  ),
+  treemapNegative: zod.array(
+    zod.object({
+      theme: zod.string(),
+      occurrences: zod.number(),
+    }),
+  ),
+});
+
+/**
+ * @summary Content gap and off-site placement opportunities
+ */
+export const getOpportunitiesQueryDateRangeDefault = `7d`;
+
+export const GetOpportunitiesQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getOpportunitiesQueryDateRangeDefault),
+  platform: zod.coerce.string().optional(),
+  topic: zod.coerce.string().optional(),
+  region: zod.coerce.string().optional(),
+});
+
+export const GetOpportunitiesResponse = zod.object({
+  kpis: zod.array(
+    zod.object({
+      label: zod.string(),
+      value: zod.string(),
+      change: zod.string(),
+      trend: zod.enum(["up", "down", "flat"]),
+    }),
+  ),
+  contentGaps: zod.array(
+    zod.object({
+      prompt: zod.string(),
+      yourRate: zod.number(),
+      topCompetitor: zod.string(),
+      theirRate: zod.number(),
+      suggestedAction: zod.string(),
+    }),
+  ),
+  offsitePlacements: zod.array(
+    zod.object({
+      url: zod.string(),
+      influence: zod.number(),
+      citations: zod.number(),
+      domainType: zod.string(),
+      da: zod.number(),
+      topics: zod.string(),
+      competitors: zod.string(),
+      action: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * @summary List tracked prompts with metrics
+ */
+export const getPromptsQueryDateRangeDefault = `7d`;
+export const getPromptsQueryPageDefault = 1;
+export const getPromptsQueryLimitDefault = 50;
+export const getPromptsQueryViewDefault = `prompt`;
+
+export const GetPromptsQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getPromptsQueryDateRangeDefault),
+  platform: zod.coerce.string().optional(),
+  topic: zod.coerce.string().optional(),
+  region: zod.coerce.string().optional(),
+  page: zod.coerce.number().default(getPromptsQueryPageDefault),
+  limit: zod.coerce.number().default(getPromptsQueryLimitDefault),
+  sort: zod.coerce.string().optional(),
+  search: zod.coerce.string().optional(),
+  view: zod.enum(["prompt", "topic"]).default(getPromptsQueryViewDefault),
+});
+
+export const GetPromptsResponse = zod.object({
+  items: zod.array(
+    zod.object({
+      id: zod.number(),
+      text: zod.string(),
+      topicName: zod.string().nullish(),
+      topicColor: zod.string().nullish(),
+      tags: zod.array(zod.string()).nullish(),
+      fanoutCount: zod.number(),
+      type: zod.string(),
+      searchVolume: zod.number().nullish(),
+      mentionRate: zod.number(),
+      mentionRateChange: zod.number(),
+      citationRate: zod.number(),
+      citationRateChange: zod.number(),
+    }),
+  ),
+  total: zod.number(),
+  page: zod.number(),
+  limit: zod.number(),
+});
+
+/**
+ * @summary List tracked pages with SEO and citation metrics
+ */
+export const getPagesQueryDateRangeDefault = `7d`;
+export const getPagesQueryPageDefault = 1;
+export const getPagesQueryLimitDefault = 50;
+export const getPagesQueryViewDefault = `page`;
+
+export const GetPagesQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getPagesQueryDateRangeDefault),
+  region: zod.coerce.string().optional(),
+  page: zod.coerce.number().default(getPagesQueryPageDefault),
+  limit: zod.coerce.number().default(getPagesQueryLimitDefault),
+  sort: zod.coerce.string().optional(),
+  search: zod.coerce.string().optional(),
+  view: zod.enum(["page", "folder"]).default(getPagesQueryViewDefault),
+});
+
+export const GetPagesResponse = zod.object({
+  items: zod.array(
+    zod.object({
+      id: zod.number(),
+      url: zod.string(),
+      folder: zod.string(),
+      primaryKeyword: zod.string().nullish(),
+      clicks: zod.number(),
+      clicksChange: zod.number(),
+      impressions: zod.number(),
+      impressionsChange: zod.number(),
+      position: zod.number(),
+      positionChange: zod.number(),
+      ctr: zod.number(),
+      ctrChange: zod.number(),
+      citationCount: zod.number(),
+      citationCountChange: zod.number(),
+      citationRate: zod.number(),
+      citationRateChange: zod.number(),
+    }),
+  ),
+  total: zod.number(),
+  page: zod.number(),
+  limit: zod.number(),
+});
+
+/**
+ * @summary List citation detail records
+ */
+export const getCitationsQueryDateRangeDefault = `7d`;
+export const getCitationsQueryPageDefault = 1;
+export const getCitationsQueryLimitDefault = 50;
+export const getCitationsQueryViewDefault = `url`;
+
+export const GetCitationsQueryParams = zod.object({
+  dateRange: zod
+    .enum(["7d", "14d", "30d", "90d"])
+    .default(getCitationsQueryDateRangeDefault),
+  platform: zod.coerce.string().optional(),
+  topic: zod.coerce.string().optional(),
+  region: zod.coerce.string().optional(),
+  page: zod.coerce.number().default(getCitationsQueryPageDefault),
+  limit: zod.coerce.number().default(getCitationsQueryLimitDefault),
+  sort: zod.coerce.string().optional(),
+  search: zod.coerce.string().optional(),
+  view: zod.enum(["url", "domain"]).default(getCitationsQueryViewDefault),
+});
+
+export const GetCitationsResponse = zod.object({
+  items: zod.array(
+    zod.object({
+      id: zod.number(),
+      url: zod.string(),
+      domain: zod.string(),
+      domainType: zod.string(),
+      pageType: zod.string().nullish(),
+      influenceScore: zod.number(),
+      domainAuthority: zod.number().nullish(),
+      hasBrandReference: zod.boolean(),
+      competitorReferences: zod.array(zod.string()).nullish(),
+      citations: zod.number(),
+    }),
+  ),
+  total: zod.number(),
+  page: zod.number(),
+  limit: zod.number(),
+});
+
+/**
+ * @summary List saved reports
+ */
+export const GetReportsResponse = zod.object({
+  items: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      dateRange: zod.string(),
+      schedule: zod.string(),
+      format: zod.string(),
+      sections: zod.array(zod.string()).nullish(),
+      recipients: zod.string().nullish(),
+      lastGeneratedAt: zod.date().nullish(),
+      createdAt: zod.date(),
+      updatedAt: zod.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Create a new report configuration
+ */
+export const CreateReportBody = zod.object({
+  name: zod.string(),
+  dateRange: zod.string().optional(),
+  schedule: zod.string().optional(),
+  format: zod.string().optional(),
+  sections: zod.array(zod.string()).optional(),
+  recipients: zod.string().optional(),
+});
+
+/**
+ * @summary Available filter values for dropdowns
+ */
+export const GetFilterOptionsResponse = zod.object({
+  platforms: zod.array(zod.string()),
+  topics: zod.array(zod.string()),
+  competitors: zod.array(zod.string()),
+  regions: zod.array(zod.string()),
+  personas: zod.array(zod.string()),
 });

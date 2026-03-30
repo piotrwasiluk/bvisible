@@ -1,13 +1,20 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
-import { workspacesTable, websitesTable, competitorsTable } from "@workspace/db";
+import {
+  workspacesTable,
+  websitesTable,
+  competitorsTable,
+} from "@workspace/db";
 import { CreateWorkspaceBody } from "@workspace/api-zod";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 const StrictWorkspaceBody = CreateWorkspaceBody.extend({
   brandName: z.string().min(1, "Brand name is required"),
-  websiteUrl: z.string().min(1, "Website URL is required").url("Must be a valid URL"),
+  websiteUrl: z
+    .string()
+    .min(1, "Website URL is required")
+    .url("Must be a valid URL"),
 });
 
 const router: IRouter = Router();
@@ -15,7 +22,9 @@ const router: IRouter = Router();
 router.post("/workspace", async (req, res) => {
   const parsed = StrictWorkspaceBody.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({ error: "validation_error", message: parsed.error.message });
+    res
+      .status(400)
+      .json({ error: "validation_error", message: parsed.error.message });
     return;
   }
 
@@ -48,8 +57,12 @@ router.post("/workspace", async (req, res) => {
       .returning();
     workspace = updated;
 
-    await db.delete(websitesTable).where(eq(websitesTable.workspaceId, workspace.id));
-    await db.delete(competitorsTable).where(eq(competitorsTable.workspaceId, workspace.id));
+    await db
+      .delete(websitesTable)
+      .where(eq(websitesTable.workspaceId, workspace.id));
+    await db
+      .delete(competitorsTable)
+      .where(eq(competitorsTable.workspaceId, workspace.id));
   } else {
     const [created] = await db
       .insert(workspacesTable)
@@ -79,9 +92,11 @@ router.post("/workspace", async (req, res) => {
   ].filter((url): url is string => !!url);
 
   if (competitorUrls.length > 0) {
-    await db.insert(competitorsTable).values(
-      competitorUrls.map((url) => ({ workspaceId: workspace.id, url }))
-    );
+    await db
+      .insert(competitorsTable)
+      .values(
+        competitorUrls.map((url) => ({ workspaceId: workspace.id, url })),
+      );
   }
 
   res.status(201).json(workspace);
@@ -90,7 +105,9 @@ router.post("/workspace", async (req, res) => {
 router.get("/workspace", async (_req, res) => {
   const workspaces = await db.select().from(workspacesTable).limit(1);
   if (workspaces.length === 0) {
-    res.status(404).json({ error: "not_found", message: "No workspace configured" });
+    res
+      .status(404)
+      .json({ error: "not_found", message: "No workspace configured" });
     return;
   }
   res.json(workspaces[0]);

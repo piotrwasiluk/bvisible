@@ -11,6 +11,18 @@ tags:
     description: Health operations
   - name: workspace
     description: Workspace setup and management
+  - name: analytics
+    description: Analytics dashboard data
+  - name: prompts
+    description: Prompt management
+  - name: pages
+    description: Page-level analytics
+  - name: citations
+    description: Citation detail data
+  - name: reports
+    description: Report management
+  - name: filters
+    description: Filter options
 paths:
   /healthz:
     get:
@@ -66,7 +78,327 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
+  # ── Analytics ─────────────────────────────────────────────────────────
+  /analytics/overview:
+    get:
+      operationId: getOverview
+      tags: [analytics]
+      summary: Overview dashboard data
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/Topic"
+        - $ref: "#/components/parameters/Competitor"
+        - $ref: "#/components/parameters/Region"
+      responses:
+        "200":
+          description: Overview data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OverviewData"
+
+  /analytics/visibility:
+    get:
+      operationId: getVisibility
+      tags: [analytics]
+      summary: Visibility metrics with time series and leaderboards
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/Topic"
+        - $ref: "#/components/parameters/Competitor"
+        - $ref: "#/components/parameters/Region"
+      responses:
+        "200":
+          description: Visibility data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VisibilityData"
+
+  /analytics/citations:
+    get:
+      operationId: getCitationsAnalytics
+      tags: [analytics]
+      summary: Citations analytics with charts and tables
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/Topic"
+        - $ref: "#/components/parameters/Competitor"
+        - $ref: "#/components/parameters/Region"
+      responses:
+        "200":
+          description: Citations analytics data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CitationsAnalyticsData"
+
+  /analytics/community:
+    get:
+      operationId: getCommunity
+      tags: [analytics]
+      summary: Community/Reddit analytics
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Region"
+      responses:
+        "200":
+          description: Community data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommunityData"
+
+  /analytics/sentiment:
+    get:
+      operationId: getSentiment
+      tags: [analytics]
+      summary: Sentiment analysis data
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/Topic"
+        - $ref: "#/components/parameters/Region"
+        - name: sentimentFilter
+          in: query
+          schema:
+            type: string
+            enum: [all, positive, negative]
+            default: all
+      responses:
+        "200":
+          description: Sentiment data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SentimentData"
+
+  /analytics/opportunities:
+    get:
+      operationId: getOpportunities
+      tags: [analytics]
+      summary: Content gap and off-site placement opportunities
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/Topic"
+        - $ref: "#/components/parameters/Region"
+      responses:
+        "200":
+          description: Opportunities data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpportunitiesData"
+
+  # ── Data Tables ───────────────────────────────────────────────────────
+  /prompts:
+    get:
+      operationId: getPrompts
+      tags: [prompts]
+      summary: List tracked prompts with metrics
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/Topic"
+        - $ref: "#/components/parameters/Region"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [prompt, topic]
+            default: prompt
+      responses:
+        "200":
+          description: Prompts list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PromptsListData"
+
+  /pages:
+    get:
+      operationId: getPages
+      tags: [pages]
+      summary: List tracked pages with SEO and citation metrics
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Region"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [page, folder]
+            default: page
+      responses:
+        "200":
+          description: Pages list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagesListData"
+
+  /citations:
+    get:
+      operationId: getCitations
+      tags: [citations]
+      summary: List citation detail records
+      parameters:
+        - $ref: "#/components/parameters/DateRange"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/Topic"
+        - $ref: "#/components/parameters/Region"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [url, domain]
+            default: url
+      responses:
+        "200":
+          description: Citations list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CitationsListData"
+
+  /reports:
+    get:
+      operationId: getReports
+      tags: [reports]
+      summary: List saved reports
+      responses:
+        "200":
+          description: Reports list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportsListData"
+    post:
+      operationId: createReport
+      tags: [reports]
+      summary: Create a new report configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportInput"
+      responses:
+        "201":
+          description: Report created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportRecord"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /filters/options:
+    get:
+      operationId: getFilterOptions
+      tags: [filters]
+      summary: Available filter values for dropdowns
+      responses:
+        "200":
+          description: Filter options
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterOptions"
+
 components:
+  parameters:
+    DateRange:
+      name: dateRange
+      in: query
+      schema:
+        type: string
+        enum: ["7d", "14d", "30d", "90d"]
+        default: "7d"
+    Platform:
+      name: platform
+      in: query
+      schema:
+        type: string
+    Topic:
+      name: topic
+      in: query
+      schema:
+        type: string
+    Competitor:
+      name: competitor
+      in: query
+      schema:
+        type: string
+    Region:
+      name: region
+      in: query
+      schema:
+        type: string
+
   schemas:
     HealthStatus:
       type: object
@@ -75,34 +407,29 @@ components:
           type: string
       required:
         - status
+
     WorkspaceSetupInput:
       type: object
       properties:
         brandName:
           type: string
-          description: The brand or company name
         websiteUrl:
           type: string
-          description: The primary website URL
         competitor1Url:
           type: string
-          description: First competitor domain URL
         competitor2Url:
           type: string
-          description: Second competitor domain URL
         competitor3Url:
           type: string
-          description: Third competitor domain URL
         region:
           type: string
-          description: Target region/language (e.g. "us-en")
           default: "us-en"
         productCategories:
           type: string
-          description: Comma-separated list of product/service categories
       required:
         - brandName
         - websiteUrl
+
     Workspace:
       type: object
       properties:
@@ -139,6 +466,7 @@ components:
         - region
         - createdAt
         - updatedAt
+
     ErrorResponse:
       type: object
       properties:
@@ -149,3 +477,652 @@ components:
       required:
         - error
         - message
+
+    # ── Shared sub-schemas ────────────────────────────────────────────
+    KpiCard:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+        change:
+          type: string
+        trend:
+          type: string
+          enum: [up, down, flat]
+      required: [label, value, change, trend]
+
+    PlatformRate:
+      type: object
+      properties:
+        platform:
+          type: string
+        rate:
+          type: number
+      required: [platform, rate]
+
+    CompetitorRank:
+      type: object
+      properties:
+        rank:
+          type: integer
+        name:
+          type: string
+        value:
+          type: string
+        change:
+          type: string
+        isYou:
+          type: boolean
+      required: [rank, name, value, change, isYou]
+
+    TimeSeriesPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        value:
+          type: number
+      required: [date, value]
+
+    NamedTimeSeries:
+      type: object
+      properties:
+        name:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+      required: [name, data]
+
+    HeatmapCell:
+      type: object
+      properties:
+        row:
+          type: string
+        col:
+          type: string
+        value:
+          type: number
+      required: [row, col, value]
+
+    TopicBar:
+      type: object
+      properties:
+        topic:
+          type: string
+        brands:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              value:
+                type: number
+              isYou:
+                type: boolean
+            required: [name, value, isYou]
+      required: [topic, brands]
+
+    # ── Analytics Response Schemas ────────────────────────────────────
+    OverviewData:
+      type: object
+      properties:
+        kpis:
+          type: array
+          items:
+            $ref: "#/components/schemas/KpiCard"
+        platforms:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlatformRate"
+        competitors:
+          type: array
+          items:
+            $ref: "#/components/schemas/CompetitorRank"
+        answerCount:
+          type: integer
+      required: [kpis, platforms, competitors, answerCount]
+
+    VisibilityData:
+      type: object
+      properties:
+        kpis:
+          type: array
+          items:
+            $ref: "#/components/schemas/KpiCard"
+        mentionRateSeries:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        mentionRateLeaderboard:
+          type: array
+          items:
+            $ref: "#/components/schemas/CompetitorRank"
+        sovSeries:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        sovLeaderboard:
+          type: array
+          items:
+            $ref: "#/components/schemas/CompetitorRank"
+        positionSeries:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        positionLeaderboard:
+          type: array
+          items:
+            $ref: "#/components/schemas/CompetitorRank"
+        topicBars:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicBar"
+        heatmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/HeatmapCell"
+      required:
+        - kpis
+        - mentionRateSeries
+        - mentionRateLeaderboard
+        - sovSeries
+        - sovLeaderboard
+        - positionSeries
+        - positionLeaderboard
+        - topicBars
+        - heatmap
+
+    CitationsAnalyticsData:
+      type: object
+      properties:
+        kpis:
+          type: array
+          items:
+            $ref: "#/components/schemas/KpiCard"
+        domainCategories:
+          type: array
+          items:
+            type: object
+            properties:
+              category:
+                type: string
+              share:
+                type: number
+              color:
+                type: string
+            required: [category, share, color]
+        citationRateSeries:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        domainTrends:
+          type: array
+          items:
+            $ref: "#/components/schemas/NamedTimeSeries"
+        competitorTrends:
+          type: array
+          items:
+            $ref: "#/components/schemas/NamedTimeSeries"
+        topDomains:
+          type: array
+          items:
+            type: object
+            properties:
+              rank:
+                type: integer
+              domain:
+                type: string
+              pctOfTotal:
+                type: number
+              citations:
+                type: integer
+            required: [rank, domain, pctOfTotal, citations]
+        topUrls:
+          type: array
+          items:
+            type: object
+            properties:
+              rank:
+                type: integer
+              url:
+                type: string
+              pctOfTotal:
+                type: number
+              citations:
+                type: integer
+            required: [rank, url, pctOfTotal, citations]
+        heatmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/HeatmapCell"
+      required:
+        - kpis
+        - domainCategories
+        - citationRateSeries
+        - domainTrends
+        - competitorTrends
+        - topDomains
+        - topUrls
+        - heatmap
+
+    CommunityData:
+      type: object
+      properties:
+        kpis:
+          type: array
+          items:
+            $ref: "#/components/schemas/KpiCard"
+        subreddits:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              rate:
+                type: number
+            required: [name, rate]
+        topUrls:
+          type: array
+          items:
+            type: object
+            properties:
+              rank:
+                type: integer
+              url:
+                type: string
+              citations:
+                type: integer
+              change:
+                type: string
+            required: [rank, url, citations, change]
+      required: [kpis, subreddits, topUrls]
+
+    SentimentThemeRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        theme:
+          type: string
+        sentimentScore:
+          type: integer
+        volumePct:
+          type: number
+        occurrences:
+          type: integer
+        isPositive:
+          type: boolean
+        exampleText:
+          type: string
+          nullable: true
+      required: [id, theme, sentimentScore, volumePct, occurrences, isPositive]
+
+    SentimentData:
+      type: object
+      properties:
+        kpis:
+          type: array
+          items:
+            $ref: "#/components/schemas/KpiCard"
+        scoreSeries:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSeriesPoint"
+        themes:
+          type: array
+          items:
+            $ref: "#/components/schemas/SentimentThemeRecord"
+        treemapPositive:
+          type: array
+          items:
+            type: object
+            properties:
+              theme:
+                type: string
+              occurrences:
+                type: integer
+            required: [theme, occurrences]
+        treemapNegative:
+          type: array
+          items:
+            type: object
+            properties:
+              theme:
+                type: string
+              occurrences:
+                type: integer
+            required: [theme, occurrences]
+      required: [kpis, scoreSeries, themes, treemapPositive, treemapNegative]
+
+    OpportunitiesData:
+      type: object
+      properties:
+        kpis:
+          type: array
+          items:
+            $ref: "#/components/schemas/KpiCard"
+        contentGaps:
+          type: array
+          items:
+            type: object
+            properties:
+              prompt:
+                type: string
+              yourRate:
+                type: number
+              topCompetitor:
+                type: string
+              theirRate:
+                type: number
+              suggestedAction:
+                type: string
+            required:
+              [prompt, yourRate, topCompetitor, theirRate, suggestedAction]
+        offsitePlacements:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              influence:
+                type: integer
+              citations:
+                type: integer
+              domainType:
+                type: string
+              da:
+                type: integer
+              topics:
+                type: string
+              competitors:
+                type: string
+              action:
+                type: string
+            required:
+              [
+                url,
+                influence,
+                citations,
+                domainType,
+                da,
+                topics,
+                competitors,
+                action,
+              ]
+      required: [kpis, contentGaps, offsitePlacements]
+
+    # ── Prompts ───────────────────────────────────────────────────────
+    PromptRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        topicName:
+          type: string
+          nullable: true
+        topicColor:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+          nullable: true
+        fanoutCount:
+          type: integer
+        type:
+          type: string
+        searchVolume:
+          type: integer
+          nullable: true
+        mentionRate:
+          type: number
+        mentionRateChange:
+          type: number
+        citationRate:
+          type: number
+        citationRateChange:
+          type: number
+      required:
+        - id
+        - text
+        - fanoutCount
+        - type
+        - mentionRate
+        - mentionRateChange
+        - citationRate
+        - citationRateChange
+
+    PromptsListData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PromptRecord"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [items, total, page, limit]
+
+    # ── Pages ─────────────────────────────────────────────────────────
+    PageRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        folder:
+          type: string
+        primaryKeyword:
+          type: string
+          nullable: true
+        clicks:
+          type: integer
+        clicksChange:
+          type: number
+        impressions:
+          type: integer
+        impressionsChange:
+          type: number
+        position:
+          type: number
+        positionChange:
+          type: number
+        ctr:
+          type: number
+        ctrChange:
+          type: number
+        citationCount:
+          type: integer
+        citationCountChange:
+          type: number
+        citationRate:
+          type: number
+        citationRateChange:
+          type: number
+      required:
+        - id
+        - url
+        - folder
+        - clicks
+        - clicksChange
+        - impressions
+        - impressionsChange
+        - position
+        - positionChange
+        - ctr
+        - ctrChange
+        - citationCount
+        - citationCountChange
+        - citationRate
+        - citationRateChange
+
+    PagesListData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PageRecord"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [items, total, page, limit]
+
+    # ── Citations Detail ──────────────────────────────────────────────
+    CitationRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        domain:
+          type: string
+        domainType:
+          type: string
+        pageType:
+          type: string
+          nullable: true
+        influenceScore:
+          type: integer
+        domainAuthority:
+          type: integer
+          nullable: true
+        hasBrandReference:
+          type: boolean
+        competitorReferences:
+          type: array
+          items:
+            type: string
+          nullable: true
+        citations:
+          type: integer
+      required:
+        - id
+        - url
+        - domain
+        - domainType
+        - influenceScore
+        - hasBrandReference
+        - citations
+
+    CitationsListData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CitationRecord"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [items, total, page, limit]
+
+    # ── Reports ───────────────────────────────────────────────────────
+    ReportInput:
+      type: object
+      properties:
+        name:
+          type: string
+        dateRange:
+          type: string
+        schedule:
+          type: string
+        format:
+          type: string
+        sections:
+          type: array
+          items:
+            type: string
+        recipients:
+          type: string
+      required: [name]
+
+    ReportRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        dateRange:
+          type: string
+        schedule:
+          type: string
+        format:
+          type: string
+        sections:
+          type: array
+          items:
+            type: string
+          nullable: true
+        recipients:
+          type: string
+          nullable: true
+        lastGeneratedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, dateRange, schedule, format, createdAt, updatedAt]
+
+    ReportsListData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportRecord"
+      required: [items]
+
+    # ── Filters ───────────────────────────────────────────────────────
+    FilterOptions:
+      type: object
+      properties:
+        platforms:
+          type: array
+          items:
+            type: string
+        topics:
+          type: array
+          items:
+            type: string
+        competitors:
+          type: array
+          items:
+            type: string
+        regions:
+          type: array
+          items:
+            type: string
+        personas:
+          type: array
+          items:
+            type: string
+      required: [platforms, topics, competitors, regions, personas]

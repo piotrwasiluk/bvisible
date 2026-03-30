@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { 
-  useGetWorkspace, 
+import {
+  useGetWorkspace,
   useCreateWorkspace,
   getGetWorkspaceQueryKey,
-  getGetWorkspaceQueryOptions
+  getGetWorkspaceQueryOptions,
 } from "@workspace/api-client-react";
 
 export function useWorkspaceConfig() {
@@ -13,18 +13,18 @@ export function useWorkspaceConfig() {
       queryKey: queryOptions.queryKey,
       retry: false,
       refetchOnWindowFocus: false,
-    }
+    },
   });
 }
 
 export function useSaveWorkspace() {
   const queryClient = useQueryClient();
-  
+
   return useCreateWorkspace({
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getGetWorkspaceQueryKey() });
       },
-    }
+    },
   });
 }

@@ -1,0 +1,51 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(echo *)",
+      "Bash(curl *)",
+      "Bash(file *)",
+      "Bash(identify *)",
+      "Bash(which *)",
+      "Bash(PORT=*)",
+      "Bash(sleep *)",
+      "Bash(for *)",
+      "Bash(find *)",
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "mcp__plugin_playwright_playwright__*",
+      "Bash(wc -l /home/runner/workspace/artifacts/be-visible/src/pages/*.tsx)",
+      "Bash(grep -r \"airop\\\\|analytics\\\\|brand.kit\\\\|aeo\\\\|MCP\\\\|mcp\" /home/runner/workspace/artifacts --include=*.ts --include=*.tsx --include=*.js)",
+      "mcp__claude_ai_AirOps__list_brand_kits",
+      "Bash(python3 -c \":*)",
+      "WebFetch(domain:docs.dataforseo.com)",
+      "WebFetch(domain:platform.openai.com)",
+      "WebFetch(domain:docs.perplexity.ai)",
+      "WebFetch(domain:peec.ai)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \"$CLAUDE_FILE_PATH\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

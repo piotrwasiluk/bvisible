@@ -5,7 +5,9 @@ import { workspacesTable } from "./workspace";
 
 export const usersTable = pgTable("users", {
   id: serial("id").primaryKey(),
-  workspaceId: integer("workspace_id").references(() => workspacesTable.id, { onDelete: "set null" }),
+  workspaceId: integer("workspace_id").references(() => workspacesTable.id, {
+    onDelete: "set null",
+  }),
   email: text("email").notNull().unique(),
   name: text("name"),
   role: text("role").notNull().default("member"),
