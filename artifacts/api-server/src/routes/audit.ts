@@ -60,19 +60,26 @@ router.post("/audit/generate-prompts", async (req, res) => {
       const genai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
       const result = await genai.models.generateContent({
         model: "gemini-2.0-flash-lite",
-        contents: `You are an AEO (Answer Engine Optimization) expert. Given this brand website: ${websiteUrl} (brand name: "${brandName}"), generate exactly 10 search prompts that real users would ask AI assistants (ChatGPT, Gemini, Perplexity, Claude) about this brand's industry and product category.
+        contents: `You are an AEO (Answer Engine Optimization) expert. Visit this website: ${websiteUrl} (brand name: "${brandName}").
+
+First, understand what the company does — their product/service category, the problems they solve, and who their target customers are.
+
+Then generate exactly 10 search prompts that a PROSPECTIVE CUSTOMER would type into an AI assistant (ChatGPT, Gemini, Perplexity, Claude) when looking for a solution in this category. These are people who don't know about ${brandName} yet — they're searching for a solution to their problem.
 
 Requirements:
-- Prompts should be natural conversational questions, NOT keywords
-- Mix of informational, comparison, and decision-making queries
-- Include prompts where the brand SHOULD appear in AI answers
-- Include prompts about the broader category (not just the brand)
+- Prompts must be category-level and use-case-driven, NOT brand-specific
+- Do NOT include the brand name "${brandName}" in any prompt
+- Do NOT generate prompts like "alternatives to X" or "X reviews" — these are brand-aware queries
+- Focus on what a buyer would search BEFORE they know about ${brandName}
+- Mix of: discovery ("best tool for..."), how-to ("how do I..."), comparison ("X vs Y category"), and decision queries
+- Natural conversational questions, not keywords
 - Each prompt on its own line, numbered 1-10
 - No explanations, just the prompts
 
-Example format:
-1. What's the best tool for [category] in 2026?
-2. How do I [solve problem the brand addresses]?
+Example (for a cloud IDE company):
+1. What is the best online coding environment for beginners?
+2. How do I build a web app without setting up a local dev environment?
+3. What tools do professional developers use for pair programming?
 ...`,
       });
 
@@ -87,19 +94,21 @@ Example format:
     }
   }
 
-  // Fallback prompts if LLM fails
+  // Fallback prompts if LLM fails — generic category-level questions
   if (generatedPrompts.length < 5) {
+    // Extract a rough category from the domain for fallback
+    const domain = new URL(websiteUrl).hostname.replace(/^www\./, "");
     generatedPrompts = [
-      `What is ${brandName} and what do they do?`,
-      `Best alternatives to ${brandName}`,
-      `${brandName} reviews and pricing`,
-      `How does ${brandName} compare to competitors?`,
-      `Is ${brandName} worth it for small businesses?`,
-      `What are the pros and cons of ${brandName}?`,
-      `How to get started with ${brandName}`,
-      `${brandName} vs competitors in 2026`,
-      `What problems does ${brandName} solve?`,
-      `Who should use ${brandName}?`,
+      `What is the best software for businesses like ${domain}?`,
+      `How do I choose the right tool for my team?`,
+      `What are the top solutions in this category in 2026?`,
+      `How do small businesses solve this problem?`,
+      `What should I look for when evaluating tools like this?`,
+      `Free vs paid tools — which is better for startups?`,
+      `What do experts recommend for this use case?`,
+      `How do enterprise teams handle this workflow?`,
+      `What are the most popular options for this category?`,
+      `Is it better to build or buy a solution for this?`,
     ];
   }
 

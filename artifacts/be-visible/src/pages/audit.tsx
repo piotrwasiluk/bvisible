@@ -359,12 +359,11 @@ function StepPrompts({
 
 function StepRunning({ onComplete }: { onComplete: () => void }) {
   const [completedPlatforms, setCompletedPlatforms] = useState<string[]>([]);
-  const [polling, setPolling] = useState(true);
+  const [backendDone, setBackendDone] = useState(false);
 
   useEffect(() => {
-    // Simulate platform completion with staggered timings
-    // In production this would poll /api/audit/status
-    const timers = PLATFORMS.map((platform, i) =>
+    // Animate platform completion with staggered timings (visual only)
+    const timers = PLATFORMS.map((platform) =>
       setTimeout(
         () => {
           setCompletedPlatforms((prev) => [...prev, platform.name]);
@@ -373,14 +372,16 @@ function StepRunning({ onComplete }: { onComplete: () => void }) {
       ),
     );
 
-    // Also poll the real status endpoint
+    // Poll the real status endpoint to know when analysis actually finishes
     const pollInterval = setInterval(async () => {
       try {
         const res = await fetch("/api/audit/status");
         const data = await res.json();
         if (!data.running) {
-          setPolling(false);
+          setBackendDone(true);
           clearInterval(pollInterval);
+          // Mark all platforms as done once backend finishes
+          setCompletedPlatforms(PLATFORMS.map((p) => p.name));
         }
       } catch {
         // ignore polling errors
@@ -393,16 +394,18 @@ function StepRunning({ onComplete }: { onComplete: () => void }) {
     };
   }, []);
 
-  // Complete when all platforms are "done" (either real or simulated)
+  // Only complete when the backend is actually done
   useEffect(() => {
-    if (completedPlatforms.length >= PLATFORMS.length) {
+    if (backendDone && completedPlatforms.length >= PLATFORMS.length) {
       const timer = setTimeout(onComplete, 1500);
       return () => clearTimeout(timer);
     }
     return undefined;
-  }, [completedPlatforms, onComplete]);
+  }, [backendDone, completedPlatforms, onComplete]);
 
-  const progress = (completedPlatforms.length / PLATFORMS.length) * 100;
+  const progress = backendDone
+    ? 100
+    : Math.min(95, (completedPlatforms.length / PLATFORMS.length) * 100);
 
   return (
     <motion.div

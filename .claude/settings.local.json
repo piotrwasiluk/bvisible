@@ -32,7 +32,8 @@
       "WebFetch(domain:docs.dataforseo.com)",
       "WebFetch(domain:platform.openai.com)",
       "WebFetch(domain:docs.perplexity.ai)",
-      "WebFetch(domain:peec.ai)"
+      "WebFetch(domain:peec.ai)",
+      "Read(//tmp/**)"
     ]
   },
   "hooks": {

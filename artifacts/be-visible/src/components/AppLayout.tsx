@@ -27,7 +27,10 @@ import {
   useGlobalFilters,
   type GlobalFilters,
 } from "@/hooks/use-global-filters";
-import { useGetFilterOptions } from "@workspace/api-client-react";
+import {
+  useGetFilterOptions,
+  useGetOverview,
+} from "@workspace/api-client-react";
 
 const ANALYTICS_NAV = [
   { href: "/overview", label: "Overview", icon: LayoutDashboard },
@@ -179,9 +182,16 @@ function FilterDropdown({
 }
 
 function GlobalFilterBar() {
-  const { filters, setFilter, clearFilter, clearAll, activeCount } =
-    useGlobalFilters();
-  const { data: filterOptions } = useGetFilterOptions();
+  const {
+    filters,
+    filterParams,
+    setFilter,
+    clearFilter,
+    clearAll,
+    activeCount,
+  } = useGlobalFilters();
+  const { data: filterOptions } = useGetFilterOptions(filterParams);
+  const { data: overviewData } = useGetOverview(filterParams);
 
   return (
     <div className="flex items-center gap-2 px-8 py-2.5 bg-surface-container-lowest border-b border-border/40 shrink-0 relative z-20">
@@ -243,7 +253,9 @@ function GlobalFilterBar() {
 
       <div className="ml-auto flex items-center gap-3 shrink-0">
         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-muted/50 rounded-lg">
-          <span className="font-mono text-xs font-bold">—</span>
+          <span className="font-mono text-xs font-bold">
+            {overviewData?.answerCount?.toLocaleString() ?? "—"}
+          </span>
           <span className="text-[10px] text-muted-foreground">answers</span>
         </div>
       </div>

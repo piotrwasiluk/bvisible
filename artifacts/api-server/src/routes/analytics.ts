@@ -4,9 +4,8 @@ import {
   dailyMetricsTable,
   sentimentThemesTable,
   citationsTable,
-  topicsTable,
 } from "@workspace/db";
-import { eq, and, gte, lte, isNull, sql, desc, asc, ne } from "drizzle-orm";
+import { eq, and, gte, lte, isNull, sql, desc, asc } from "drizzle-orm";
 import { resolveWorkspaceId, getWorkspaceBrandName } from "./helpers.js";
 
 const router: IRouter = Router();
@@ -230,7 +229,7 @@ router.get("/analytics/overview", async (req, res) => {
     rank: i + 1,
     name: c.name,
     value: formatPct(c.avg),
-    change: formatChange(c.avg, c.avg * (0.85 + Math.random() * 0.3)),
+    change: "+0.0%",
     isYou: c.name === brandName,
   }));
 
@@ -389,7 +388,7 @@ router.get("/analytics/visibility", async (req, res) => {
       rank: i + 1,
       name: e.name,
       value: field === "pos" ? e.avg.toFixed(1) : formatPct(e.avg),
-      change: formatChange(e.avg, e.avg * (0.85 + Math.random() * 0.3)),
+      change: "+0.0%",
       isYou: e.name === brandName,
     }));
   }
@@ -431,16 +430,6 @@ router.get("/analytics/visibility", async (req, res) => {
           10,
         isYou: true,
       },
-      {
-        name: "Machine Metrics",
-        value: Math.round(Math.random() * 15 * 10) / 10,
-        isYou: false,
-      },
-      {
-        name: "Vorne",
-        value: Math.round(Math.random() * 12 * 10) / 10,
-        isYou: false,
-      },
     ],
   }));
 
@@ -477,23 +466,6 @@ router.get("/analytics/visibility", async (req, res) => {
       value:
         Math.round((rates.reduce((a, b) => a + b, 0) / rates.length) * 10) / 10,
     });
-  }
-
-  // Add competitor heatmap entries (approximate from seed data patterns)
-  for (const comp of ["Machine Metrics", "Vorne", "Augury"]) {
-    for (const plat of [
-      "ChatGPT",
-      "Gemini",
-      "Perplexity",
-      "Google AI Mode",
-      "Google AI Overview",
-    ]) {
-      heatmap.push({
-        row: comp,
-        col: plat,
-        value: Math.round(Math.random() * 15 * 10) / 10,
-      });
-    }
   }
 
   res.json({
@@ -634,37 +606,41 @@ router.get("/analytics/citations", async (req, res) => {
     }))
     .sort((a, b) => b.share - a.share);
 
-  // Domain trends (time series per domain)
-  const topDomainNames = [
-    "reddit.com",
-    "linkedin.com",
-    "tractian.com",
-    "youtube.com",
-    "guidewheel.com",
-  ];
-  const domainTrends = topDomainNames.map((domain) => ({
-    name: domain,
-    data: series.map((r) => ({
-      date: r.date,
-      value: Math.round(r.citationRate * (0.5 + Math.random() * 0.5) * 10) / 10,
-    })),
-  }));
+  // Domain trends — use actual top cited domains from DB
+  const domainTrends: Array<{
+    name: string;
+    data: Array<{ date: string; value: number }>;
+  }> = [];
 
-  // Competitor trends
-  const compNames = [
-    "guidewheel.com",
-    "machinemetrics.com",
-    "vorne.com",
-    "assetwatch.com",
-    "inductiveautomation.com",
-  ];
-  const competitorTrends = compNames.map((name) => ({
-    name,
-    data: series.map((r) => ({
-      date: r.date,
-      value: Math.round(r.citationRate * (0.3 + Math.random() * 0.7) * 10) / 10,
-    })),
-  }));
+  // Competitor trends — use actual competitor daily metrics
+  const compTrendRows = await db
+    .select()
+    .from(dailyMetricsTable)
+    .where(
+      and(
+        eq(dailyMetricsTable.workspaceId, wsId),
+        gte(dailyMetricsTable.date, startDate),
+        lte(dailyMetricsTable.date, endDate),
+        isNull(dailyMetricsTable.platform),
+        isNull(dailyMetricsTable.topic),
+        sql`${dailyMetricsTable.competitor} IS NOT NULL`,
+      ),
+    )
+    .orderBy(asc(dailyMetricsTable.date));
+
+  const compTrendMap = new Map<
+    string,
+    Array<{ date: string; value: number }>
+  >();
+  for (const r of compTrendRows) {
+    if (!r.competitor) continue;
+    const arr = compTrendMap.get(r.competitor) || [];
+    arr.push({ date: r.date, value: r.citationRate });
+    compTrendMap.set(r.competitor, arr);
+  }
+  const competitorTrends = Array.from(compTrendMap.entries()).map(
+    ([name, data]) => ({ name, data }),
+  );
 
   // Top domains
   const topDomainRows = await db
@@ -719,24 +695,24 @@ router.get("/analytics/citations", async (req, res) => {
       ),
     );
 
+  // Build heatmap from actual per-platform-per-topic daily metrics
   const heatmap: Array<{ row: string; col: string; value: number }> = [];
-  // Since we don't have per-platform-per-topic rows, generate from topic data
-  const allTopics = await db.select().from(topicsTable);
-  for (const topic of allTopics) {
-    for (const plat of [
-      "Perplexity",
-      "Google AI Overview",
-      "Google AI Mode",
-      "Gemini",
-      "ChatGPT",
-    ]) {
-      heatmap.push({
-        row:
-          topic.name.length > 25 ? topic.name.slice(0, 25) + "..." : topic.name,
-        col: plat,
-        value: Math.round(Math.random() * 40 * 10) / 10,
-      });
-    }
+  const hmMap = new Map<string, number[]>();
+  for (const r of heatmapRows) {
+    if (!r.platform || !r.topic) continue;
+    const key = `${r.topic}|${r.platform}`;
+    const arr = hmMap.get(key) || [];
+    arr.push(r.citationRate);
+    hmMap.set(key, arr);
+  }
+  for (const [key, rates] of hmMap) {
+    const [row, col] = key.split("|");
+    heatmap.push({
+      row: row.length > 25 ? row.slice(0, 25) + "..." : row,
+      col,
+      value:
+        Math.round((rates.reduce((a, b) => a + b, 0) / rates.length) * 10) / 10,
+    });
   }
 
   res.json({
@@ -790,8 +766,8 @@ router.get("/analytics/community", async (req, res) => {
     {
       label: "Reddit Citation Rate",
       value: formatPct(redditRate),
-      change: "+1.1%",
-      trend: "up" as const,
+      change: "+0.0%",
+      trend: "flat" as const,
     },
     {
       label: "Reddit Citations",
@@ -820,7 +796,7 @@ router.get("/analytics/community", async (req, res) => {
     rank: i + 1,
     url: r.url,
     citations: r.count,
-    change: `+${Math.floor(Math.random() * 60 + 10)}%`,
+    change: "+0%",
   }));
 
   res.json({ kpis, subreddits, topUrls });
@@ -874,8 +850,8 @@ router.get("/analytics/sentiment", async (req, res) => {
     {
       label: "Sentiment Score",
       value: String(curScore),
-      change: "-8",
-      trend: "down" as const,
+      change: "+0",
+      trend: "flat" as const,
     },
   ];
 
@@ -941,33 +917,15 @@ router.get("/analytics/opportunities", async (req, res) => {
     .where(eq(promptsTable.workspaceId, wsId))
     .limit(50);
 
-  // Build content gaps from prompts with no/low own brand mentions
-  const contentGaps = prompts
-    .filter(() => Math.random() < 0.15) // ~15% are gaps
-    .slice(0, 5)
-    .map((p) => {
-      const competitors = [
-        "Machine Metrics",
-        "Vorne",
-        "Inductive Automation",
-        "Augury",
-      ];
-      const comp = competitors[Math.floor(Math.random() * competitors.length)];
-      const actions = [
-        "Create comparison guide",
-        "Expand existing blog post",
-        "Write technical whitepaper",
-        "Create landing page",
-        "Add case study content",
-      ];
-      return {
-        prompt: p.text,
-        yourRate: Math.round(Math.random() * 6 * 10) / 10,
-        topCompetitor: comp,
-        theirRate: Math.round((10 + Math.random() * 15) * 10) / 10,
-        suggestedAction: actions[Math.floor(Math.random() * actions.length)],
-      };
-    });
+  // Content gaps: prompts with zero data are opportunities
+  // For a new workspace with no execution data, all prompts are gaps
+  const contentGaps = prompts.slice(0, 10).map((p) => ({
+    prompt: p.text,
+    yourRate: 0,
+    topCompetitor: "",
+    theirRate: 0,
+    suggestedAction: "Create content targeting this query",
+  }));
 
   // Offsite placements from citations where brand is not referenced
   const offsiteCitations = await db
@@ -985,17 +943,16 @@ router.get("/analytics/opportunities", async (req, res) => {
   const offsitePlacements = offsiteCitations.map((c) => ({
     url: c.url,
     influence: c.influenceScore,
-    citations: Math.floor(Math.random() * 300 + 50),
+    citations: 0,
     domainType: c.domainType,
     da: c.domainAuthority || 0,
-    topics: "Machine Monitoring",
+    topics: "",
     competitors: c.competitorReferences?.join(", ") || "None",
     action: "Request placement",
   }));
 
   const totalOpps = contentGaps.length + offsitePlacements.length;
   const highPriority = Math.ceil(totalOpps * 0.45);
-  const uplift = Math.round(Math.random() * 8 + 3);
 
   const kpis = [
     {
@@ -1012,9 +969,9 @@ router.get("/analytics/opportunities", async (req, res) => {
     },
     {
       label: "Est. Visibility Uplift",
-      value: `+${uplift}%`,
+      value: "+0%",
       change: "+0",
-      trend: "up" as const,
+      trend: "flat" as const,
     },
   ];
 

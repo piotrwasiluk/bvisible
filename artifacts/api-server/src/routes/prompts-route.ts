@@ -91,11 +91,10 @@ router.get("/prompts", async (req, res) => {
     fanoutCount: r.fanoutCount,
     type: r.type,
     searchVolume: r.searchVolume,
-    // These would come from real execution data in production
-    mentionRate: Math.round(Math.random() * 40 * 10) / 10,
-    mentionRateChange: Math.round((Math.random() * 20 - 5) * 10) / 10,
-    citationRate: Math.round(Math.random() * 65 * 10) / 10,
-    citationRateChange: Math.round((Math.random() * 45 - 5) * 10) / 10,
+    mentionRate: 0,
+    mentionRateChange: 0,
+    citationRate: 0,
+    citationRateChange: 0,
   }));
 
   res.json({ items, total, page, limit });
