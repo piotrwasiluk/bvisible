@@ -41,21 +41,22 @@ All pages in `artifacts/be-visible/src/pages/`. Routes defined in `App.tsx`.
 
 ## Audit Flow (`/audit`)
 
-4-step wizard:
+4-step wizard. Each audit creates a **new free workspace** for the audited company (separate from paid workspaces).
 
-1. **Website Input** — Enter URL, optional brand name. Calls `POST /api/audit/generate-prompts` which uses Gemini to generate 10 prompts.
+1. **Website Input** — Enter URL, optional brand name. Calls `POST /api/audit/generate-prompts` which uses Gemini to generate 10 prompts and creates a new workspace with `type: "free"`.
 2. **Review Prompts** — Editable list of generated prompts. Free tier: max 10. Users can add, edit, delete prompts.
 3. **Running Analysis** — Animated progress showing each AI platform being queried (OpenAI → Gemini → Perplexity → Claude → Google AI Mode) with checkmarks. Polls `/api/audit/status`.
-4. **Complete** — Success screen, auto-redirects to `/overview` after 3 seconds.
+4. **Complete** — Success screen, auto-redirects to `/overview?workspaceId=<id>` after 3 seconds, routing the user to their audit workspace's dashboard.
 
 ## Global Filters
 
 Persistent filter bar in `AppLayout.tsx` (visible on all app pages):
 
+- **Workspace ID** — Scopes all data to a specific workspace. Preserved across sidebar navigation. When absent, defaults to the first paid workspace.
 - Date Range (7d/14d/30d/90d)
 - Region
 - Platform
 - Topic
 - Competitor
 
-State managed via URL search params (`use-global-filters.ts`). All analytics React Query hooks include filter params in their query key.
+State managed via URL search params (`use-global-filters.ts`). All analytics React Query hooks include filter params (including `workspaceId`) in their query key. The sidebar nav links in `AppLayout.tsx` preserve the `workspaceId` param when navigating between pages.

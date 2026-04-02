@@ -7,6 +7,7 @@ import {
   topicsTable,
 } from "@workspace/db";
 import { eq, and, gte, lte, isNull, sql, desc, asc, ne } from "drizzle-orm";
+import { resolveWorkspaceId, getWorkspaceBrandName } from "./helpers.js";
 
 const router: IRouter = Router();
 
@@ -55,6 +56,12 @@ function trend(current: number, previous: number): "up" | "down" | "flat" {
 // ── GET /analytics/overview ──────────────────────────────────────────────────
 
 router.get("/analytics/overview", async (req, res) => {
+  const wsId = await resolveWorkspaceId(req);
+  if (!wsId) {
+    res.json({ kpis: [], platforms: [], competitors: [], answerCount: 0 });
+    return;
+  }
+  const brandName = await getWorkspaceBrandName(wsId);
   const { startDate, endDate } = getDateBounds(req.query.dateRange as string);
   const days = dateRangeToDays(req.query.dateRange as string);
 
@@ -72,6 +79,7 @@ router.get("/analytics/overview", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         isNull(dailyMetricsTable.platform),
@@ -85,6 +93,7 @@ router.get("/analytics/overview", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, prevStartStr),
         lte(dailyMetricsTable.date, prevEndStr),
         isNull(dailyMetricsTable.platform),
@@ -160,6 +169,7 @@ router.get("/analytics/overview", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         sql`${dailyMetricsTable.platform} IS NOT NULL`,
@@ -190,6 +200,7 @@ router.get("/analytics/overview", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         isNull(dailyMetricsTable.platform),
@@ -212,7 +223,7 @@ router.get("/analytics/overview", async (req, res) => {
   }));
 
   // Add own brand
-  compAvgs.push({ name: "Guidewheel", avg: curMention });
+  compAvgs.push({ name: brandName, avg: curMention });
   compAvgs.sort((a, b) => b.avg - a.avg);
 
   const competitors = compAvgs.map((c, i) => ({
@@ -220,7 +231,7 @@ router.get("/analytics/overview", async (req, res) => {
     name: c.name,
     value: formatPct(c.avg),
     change: formatChange(c.avg, c.avg * (0.85 + Math.random() * 0.3)),
-    isYou: c.name === "Guidewheel",
+    isYou: c.name === brandName,
   }));
 
   res.json({ kpis, platforms, competitors, answerCount });
@@ -229,6 +240,22 @@ router.get("/analytics/overview", async (req, res) => {
 // ── GET /analytics/visibility ────────────────────────────────────────────────
 
 router.get("/analytics/visibility", async (req, res) => {
+  const wsId = await resolveWorkspaceId(req);
+  if (!wsId) {
+    res.json({
+      kpis: [],
+      mentionRateSeries: [],
+      mentionRateLeaderboard: [],
+      sovSeries: [],
+      sovLeaderboard: [],
+      positionSeries: [],
+      positionLeaderboard: [],
+      topicBars: [],
+      heatmap: [],
+    });
+    return;
+  }
+  const brandName = await getWorkspaceBrandName(wsId);
   const { startDate, endDate } = getDateBounds(req.query.dateRange as string);
   const days = dateRangeToDays(req.query.dateRange as string);
 
@@ -245,6 +272,7 @@ router.get("/analytics/visibility", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         isNull(dailyMetricsTable.platform),
@@ -259,6 +287,7 @@ router.get("/analytics/visibility", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, prevStartStr),
         lte(dailyMetricsTable.date, prevEndStr),
         isNull(dailyMetricsTable.platform),
@@ -319,6 +348,7 @@ router.get("/analytics/visibility", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         isNull(dailyMetricsTable.platform),
@@ -353,14 +383,14 @@ router.get("/analytics/visibility", async (req, res) => {
       name,
       avg: data[field].reduce((a, b) => a + b, 0) / data[field].length,
     }));
-    entries.push({ name: "Guidewheel", avg: ownValue });
+    entries.push({ name: brandName, avg: ownValue });
     entries.sort((a, b) => (ascending ? a.avg - b.avg : b.avg - a.avg));
     return entries.map((e, i) => ({
       rank: i + 1,
       name: e.name,
       value: field === "pos" ? e.avg.toFixed(1) : formatPct(e.avg),
       change: formatChange(e.avg, e.avg * (0.85 + Math.random() * 0.3)),
-      isYou: e.name === "Guidewheel",
+      isYou: e.name === brandName,
     }));
   }
 
@@ -374,6 +404,7 @@ router.get("/analytics/visibility", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         isNull(dailyMetricsTable.platform),
@@ -394,7 +425,7 @@ router.get("/analytics/visibility", async (req, res) => {
     topic,
     brands: [
       {
-        name: "Guidewheel",
+        name: brandName,
         value:
           Math.round((rates.reduce((a, b) => a + b, 0) / rates.length) * 10) /
           10,
@@ -419,6 +450,7 @@ router.get("/analytics/visibility", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         sql`${dailyMetricsTable.platform} IS NOT NULL`,
@@ -431,7 +463,7 @@ router.get("/analytics/visibility", async (req, res) => {
   const heatmapMap = new Map<string, number[]>();
   for (const r of heatmapRows) {
     if (!r.platform) continue;
-    const key = `Guidewheel|${r.platform}`;
+    const key = `${brandName}|${r.platform}`;
     const arr = heatmapMap.get(key) || [];
     arr.push(r.mentionRate);
     heatmapMap.set(key, arr);
@@ -480,6 +512,20 @@ router.get("/analytics/visibility", async (req, res) => {
 // ── GET /analytics/citations ─────────────────────────────────────────────────
 
 router.get("/analytics/citations", async (req, res) => {
+  const wsId = await resolveWorkspaceId(req);
+  if (!wsId) {
+    res.json({
+      kpis: [],
+      domainCategories: [],
+      citationRateSeries: [],
+      domainTrends: [],
+      competitorTrends: [],
+      topDomains: [],
+      topUrls: [],
+      heatmap: [],
+    });
+    return;
+  }
   const { startDate, endDate } = getDateBounds(req.query.dateRange as string);
   const days = dateRangeToDays(req.query.dateRange as string);
 
@@ -495,6 +541,7 @@ router.get("/analytics/citations", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         isNull(dailyMetricsTable.platform),
@@ -509,6 +556,7 @@ router.get("/analytics/citations", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, prevStartStr),
         lte(dailyMetricsTable.date, prevEndStr),
         isNull(dailyMetricsTable.platform),
@@ -564,6 +612,7 @@ router.get("/analytics/citations", async (req, res) => {
       count: sql<number>`count(*)::int`,
     })
     .from(citationsTable)
+    .where(eq(citationsTable.workspaceId, wsId))
     .groupBy(citationsTable.domainType);
 
   const totalCit = domainTypeRows.reduce((s, r) => s + r.count, 0);
@@ -624,6 +673,7 @@ router.get("/analytics/citations", async (req, res) => {
       count: sql<number>`count(*)::int`,
     })
     .from(citationsTable)
+    .where(eq(citationsTable.workspaceId, wsId))
     .groupBy(citationsTable.domain)
     .orderBy(sql`count(*) desc`)
     .limit(10);
@@ -642,6 +692,7 @@ router.get("/analytics/citations", async (req, res) => {
       count: sql<number>`count(*)::int`,
     })
     .from(citationsTable)
+    .where(eq(citationsTable.workspaceId, wsId))
     .groupBy(citationsTable.url)
     .orderBy(sql`count(*) desc`)
     .limit(10);
@@ -659,6 +710,7 @@ router.get("/analytics/citations", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         sql`${dailyMetricsTable.platform} IS NOT NULL`,
@@ -702,6 +754,11 @@ router.get("/analytics/citations", async (req, res) => {
 // ── GET /analytics/community ─────────────────────────────────────────────────
 
 router.get("/analytics/community", async (req, res) => {
+  const wsId = await resolveWorkspaceId(req);
+  if (!wsId) {
+    res.json({ kpis: [], subreddits: [], topUrls: [] });
+    return;
+  }
   const { startDate, endDate } = getDateBounds(req.query.dateRange as string);
 
   // Reddit citations
@@ -711,7 +768,12 @@ router.get("/analytics/community", async (req, res) => {
       count: sql<number>`count(*)::int`,
     })
     .from(citationsTable)
-    .where(eq(citationsTable.domain, "reddit.com"))
+    .where(
+      and(
+        eq(citationsTable.workspaceId, wsId),
+        eq(citationsTable.domain, "reddit.com"),
+      ),
+    )
     .groupBy(citationsTable.url)
     .orderBy(sql`count(*) desc`)
     .limit(10);
@@ -719,7 +781,8 @@ router.get("/analytics/community", async (req, res) => {
   const totalReddit = redditCitations.reduce((s, r) => s + r.count, 0);
   const totalAll = await db
     .select({ count: sql<number>`count(*)::int` })
-    .from(citationsTable);
+    .from(citationsTable)
+    .where(eq(citationsTable.workspaceId, wsId));
   const totalAllCount = totalAll[0]?.count || 1;
   const redditRate = Math.round((totalReddit / totalAllCount) * 1000) / 10;
 
@@ -766,6 +829,17 @@ router.get("/analytics/community", async (req, res) => {
 // ── GET /analytics/sentiment ─────────────────────────────────────────────────
 
 router.get("/analytics/sentiment", async (req, res) => {
+  const wsId = await resolveWorkspaceId(req);
+  if (!wsId) {
+    res.json({
+      kpis: [],
+      scoreSeries: [],
+      themes: [],
+      treemapPositive: [],
+      treemapNegative: [],
+    });
+    return;
+  }
   const { startDate, endDate } = getDateBounds(req.query.dateRange as string);
   const sentimentFilter = (req.query.sentimentFilter as string) || "all";
 
@@ -775,6 +849,7 @@ router.get("/analytics/sentiment", async (req, res) => {
     .from(dailyMetricsTable)
     .where(
       and(
+        eq(dailyMetricsTable.workspaceId, wsId),
         gte(dailyMetricsTable.date, startDate),
         lte(dailyMetricsTable.date, endDate),
         isNull(dailyMetricsTable.platform),
@@ -805,8 +880,10 @@ router.get("/analytics/sentiment", async (req, res) => {
   ];
 
   // Themes
-  let themesQuery = db.select().from(sentimentThemesTable);
-  const themes = await themesQuery;
+  const themes = await db
+    .select()
+    .from(sentimentThemesTable)
+    .where(eq(sentimentThemesTable.workspaceId, wsId));
 
   const filteredThemes =
     sentimentFilter === "all"
@@ -847,13 +924,22 @@ router.get("/analytics/sentiment", async (req, res) => {
 // ── GET /analytics/opportunities ─────────────────────────────────────────────
 
 router.get("/analytics/opportunities", async (req, res) => {
+  const wsId = await resolveWorkspaceId(req);
+  if (!wsId) {
+    res.json({ kpis: [], contentGaps: [], offsitePlacements: [] });
+    return;
+  }
   // Content gaps: prompts where brand mention rate is low but competitors are high
   // We'll build this from daily_metrics comparing own brand vs competitors
   const { startDate, endDate } = getDateBounds(req.query.dateRange as string);
 
   // Get prompts with low mention rate
   const { promptsTable } = await import("@workspace/db");
-  const prompts = await db.select().from(promptsTable).limit(50);
+  const prompts = await db
+    .select()
+    .from(promptsTable)
+    .where(eq(promptsTable.workspaceId, wsId))
+    .limit(50);
 
   // Build content gaps from prompts with no/low own brand mentions
   const contentGaps = prompts
@@ -887,7 +973,12 @@ router.get("/analytics/opportunities", async (req, res) => {
   const offsiteCitations = await db
     .select()
     .from(citationsTable)
-    .where(eq(citationsTable.hasBrandReference, false))
+    .where(
+      and(
+        eq(citationsTable.workspaceId, wsId),
+        eq(citationsTable.hasBrandReference, false),
+      ),
+    )
     .orderBy(desc(citationsTable.influenceScore))
     .limit(5);
 

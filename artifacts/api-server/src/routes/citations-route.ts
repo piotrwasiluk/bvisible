@@ -1,7 +1,8 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { citationsTable } from "@workspace/db";
-import { ilike, sql, asc, desc } from "drizzle-orm";
+import { eq, and, ilike, sql, asc, desc } from "drizzle-orm";
+import { resolveWorkspaceId } from "./helpers.js";
 
 const router: IRouter = Router();
 
@@ -15,12 +16,22 @@ router.get("/citations", async (req, res) => {
   const search = (req.query.search as string) || "";
   const view = (req.query.view as string) || "url";
 
+  const wsId = await resolveWorkspaceId(req);
+
   const conditions = [];
+  if (wsId) {
+    conditions.push(eq(citationsTable.workspaceId, wsId));
+  }
   if (search) {
     conditions.push(ilike(citationsTable.url, `%${search}%`));
   }
 
-  const whereClause = conditions.length > 0 ? conditions[0] : undefined;
+  const whereClause =
+    conditions.length > 1
+      ? and(...conditions)
+      : conditions.length === 1
+        ? conditions[0]
+        : undefined;
 
   if (view === "domain") {
     // Group by domain
@@ -35,6 +46,7 @@ router.get("/citations", async (req, res) => {
         uniqueUrls: sql<number>`count(distinct ${citationsTable.url})::int`,
       })
       .from(citationsTable)
+      .where(whereClause)
       .groupBy(citationsTable.domain, citationsTable.domainType)
       .orderBy(sql`count(*) desc`)
       .limit(limit)
@@ -44,7 +56,8 @@ router.get("/citations", async (req, res) => {
       .select({
         count: sql<number>`count(distinct ${citationsTable.domain})::int`,
       })
-      .from(citationsTable);
+      .from(citationsTable)
+      .where(whereClause);
 
     const items = domainRows.map((r, i) => ({
       id: i + 1 + offset,

@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useSearch, useLocation } from "wouter";
 
 export interface GlobalFilters {
+  workspaceId: string;
   dateRange: string;
   platform: string;
   topic: string;
@@ -10,6 +11,7 @@ export interface GlobalFilters {
 }
 
 const DEFAULTS: GlobalFilters = {
+  workspaceId: "",
   dateRange: "7d",
   platform: "",
   topic: "",
@@ -24,6 +26,7 @@ export function useGlobalFilters() {
   const filters = useMemo(() => {
     const params = new URLSearchParams(searchString);
     return {
+      workspaceId: params.get("workspaceId") || DEFAULTS.workspaceId,
       dateRange: params.get("dateRange") || DEFAULTS.dateRange,
       platform: params.get("platform") || DEFAULTS.platform,
       topic: params.get("topic") || DEFAULTS.topic,
@@ -65,6 +68,7 @@ export function useGlobalFilters() {
 
   const filterParams = useMemo(() => {
     const p: Record<string, string> = {};
+    if (filters.workspaceId) p.workspaceId = filters.workspaceId;
     if (filters.dateRange !== DEFAULTS.dateRange)
       p.dateRange = filters.dateRange;
     if (filters.platform) p.platform = filters.platform;

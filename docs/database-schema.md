@@ -6,12 +6,12 @@ PostgreSQL via Drizzle ORM. Schema files in `lib/db/src/schema/`.
 
 ### Core
 
-| Table         | File            | Purpose                                                          |
-| ------------- | --------------- | ---------------------------------------------------------------- |
-| `workspaces`  | `workspace.ts`  | Brand config: name, website URL, up to 3 competitor URLs, region |
-| `websites`    | `website.ts`    | Additional websites linked to a workspace                        |
-| `competitors` | `competitor.ts` | Competitor URLs (separate from the 3 in workspace)               |
-| `users`       | `user.ts`       | User accounts with workspace association and roles               |
+| Table         | File            | Purpose                                                                                   |
+| ------------- | --------------- | ----------------------------------------------------------------------------------------- |
+| `workspaces`  | `workspace.ts`  | Brand config: name, website URL, up to 3 competitor URLs, region, type (`paid` \| `free`) |
+| `websites`    | `website.ts`    | Additional websites linked to a workspace                                                 |
+| `competitors` | `competitor.ts` | Competitor URLs (separate from the 3 in workspace)                                        |
+| `users`       | `user.ts`       | User accounts with workspace association and roles                                        |
 
 ### Prompts & Execution
 
@@ -52,6 +52,17 @@ workspace (1) ──→ (N) reports
 ```
 
 All child tables cascade delete when the parent workspace is deleted.
+
+## Workspace Types
+
+The `workspaces.type` column (`text`, default `"paid"`) distinguishes workspace tiers:
+
+| Type   | Created By                         | Daily Cron | Description                                       |
+| ------ | ---------------------------------- | ---------- | ------------------------------------------------- |
+| `paid` | `POST /api/workspace` or setup     | Yes        | Customer workspaces, updated daily at 2 AM UTC    |
+| `free` | `POST /api/audit/generate-prompts` | No         | One-off free audit workspaces, not auto-refreshed |
+
+Each free audit creates a **new** workspace (not a singleton). All API data routes accept a `workspaceId` query param to scope queries; when omitted, the first paid workspace is used as default.
 
 ## `daily_metrics` Dimensions
 

@@ -170,8 +170,9 @@ Workspaces are processed in batches of 10 to control memory pressure.
 
 ## Scheduling
 
-- **Automatic**: `node-cron` runs daily at 2:00 AM UTC (configured in `scheduler.ts`)
-- **Manual trigger**: `POST /api/analysis/run` — starts analysis in background, returns immediately
+- **Automatic**: `node-cron` runs daily at 2:00 AM UTC (configured in `scheduler.ts`). Only processes **paid** workspaces — free audit workspaces are excluded from the daily cron.
+- **Manual trigger**: `POST /api/analysis/run` — starts analysis in background, returns immediately. Can target any workspace (including free) via `{workspaceId}` in the body.
+- **Free audit trigger**: `POST /api/audit/run` — same as above, used by the audit flow to run analysis for a newly created free workspace.
 - **Status check**: `GET /api/analysis/status` — returns `{running: boolean}`
 - A guard prevents concurrent runs (if already running, manual trigger returns 409)
 
@@ -180,7 +181,7 @@ Workspaces are processed in batches of 10 to control memory pressure.
 ```
 1. Cron fires at 2 AM UTC (or POST /api/analysis/run)
 
-2. For each workspace (batches of 10):
+2. For each **paid** workspace (batches of 10; free workspaces skipped unless explicitly targeted by ID):
    a. Load all prompts from DB
    b. For each provider (all 5 in parallel):
       For each prompt (concurrent within rate limit):

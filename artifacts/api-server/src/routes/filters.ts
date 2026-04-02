@@ -1,25 +1,36 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { topicsTable, dailyMetricsTable } from "@workspace/db";
-import { sql } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
+import { resolveWorkspaceId } from "./helpers.js";
 
 const router: IRouter = Router();
 
-router.get("/filters/options", async (_req, res) => {
+router.get("/filters/options", async (req, res) => {
+  const wsId = await resolveWorkspaceId(req);
+
   // Platforms
   const platformRows = await db
     .select({ platform: sql<string>`distinct ${dailyMetricsTable.platform}` })
     .from(dailyMetricsTable)
-    .where(sql`${dailyMetricsTable.platform} IS NOT NULL`);
+    .where(
+      and(
+        wsId ? eq(dailyMetricsTable.workspaceId, wsId) : undefined,
+        sql`${dailyMetricsTable.platform} IS NOT NULL`,
+      ),
+    );
   const platforms = platformRows
     .map((r) => r.platform)
     .filter(Boolean)
     .sort();
 
   // Topics
-  const topicRows = await db
-    .select({ name: topicsTable.name })
-    .from(topicsTable);
+  const topicRows = wsId
+    ? await db
+        .select({ name: topicsTable.name })
+        .from(topicsTable)
+        .where(eq(topicsTable.workspaceId, wsId))
+    : await db.select({ name: topicsTable.name }).from(topicsTable);
   const topics = topicRows.map((r) => r.name).sort();
 
   // Competitors
@@ -28,7 +39,12 @@ router.get("/filters/options", async (_req, res) => {
       competitor: sql<string>`distinct ${dailyMetricsTable.competitor}`,
     })
     .from(dailyMetricsTable)
-    .where(sql`${dailyMetricsTable.competitor} IS NOT NULL`);
+    .where(
+      and(
+        wsId ? eq(dailyMetricsTable.workspaceId, wsId) : undefined,
+        sql`${dailyMetricsTable.competitor} IS NOT NULL`,
+      ),
+    );
   const competitors = compRows
     .map((r) => r.competitor)
     .filter(Boolean)

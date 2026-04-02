@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -59,10 +59,12 @@ function NavSection({
   label,
   items,
   location,
+  workspaceQuery,
 }: {
   label: string;
   items: typeof ANALYTICS_NAV;
   location: string;
+  workspaceQuery: string;
 }) {
   return (
     <div className="mb-6">
@@ -72,10 +74,13 @@ function NavSection({
       <div className="flex flex-col gap-0.5">
         {items.map((item) => {
           const isActive = location === item.href;
+          const href = workspaceQuery
+            ? `${item.href}?${workspaceQuery}`
+            : item.href;
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive
@@ -248,7 +253,12 @@ function GlobalFilterBar() {
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
+  const searchString = useSearch();
   const { data: workspace } = useWorkspaceConfig();
+
+  // Preserve workspaceId across nav links
+  const wsId = new URLSearchParams(searchString).get("workspaceId");
+  const workspaceQuery = wsId ? `workspaceId=${wsId}` : "";
 
   const isSetup = location === "/setup";
 
@@ -273,14 +283,25 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             label="Analytics"
             items={ANALYTICS_NAV}
             location={location}
+            workspaceQuery={workspaceQuery}
           />
-          <NavSection label="Data" items={DATA_NAV} location={location} />
-          <NavSection label="Actions" items={ACTIONS_NAV} location={location} />
+          <NavSection
+            label="Data"
+            items={DATA_NAV}
+            location={location}
+            workspaceQuery={workspaceQuery}
+          />
+          <NavSection
+            label="Actions"
+            items={ACTIONS_NAV}
+            location={location}
+            workspaceQuery={workspaceQuery}
+          />
         </div>
 
         <div className="mt-auto flex flex-col gap-0.5 border-t border-border/40 pt-4">
           <Link
-            href="/settings"
+            href={workspaceQuery ? `/settings?${workspaceQuery}` : "/settings"}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-border/20 transition-colors"
           >
             <Settings className="w-4 h-4" /> Settings

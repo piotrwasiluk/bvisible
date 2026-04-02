@@ -33,8 +33,34 @@ export const CreateWorkspaceBody = zod.object({
 /**
  * @summary Get current workspace
  */
+export const getWorkspaceResponseTypeDefault = `paid`;
+
 export const GetWorkspaceResponse = zod.object({
   id: zod.number(),
+  type: zod.enum(["paid", "free"]).default(getWorkspaceResponseTypeDefault),
+  brandName: zod.string(),
+  websiteUrl: zod.string(),
+  competitor1Url: zod.string().nullish(),
+  competitor2Url: zod.string().nullish(),
+  competitor3Url: zod.string().nullish(),
+  region: zod.string(),
+  productCategories: zod.string().nullish(),
+  createdAt: zod.date(),
+  updatedAt: zod.date(),
+});
+
+/**
+ * @summary Get workspace by ID
+ */
+export const GetWorkspaceByIdParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const getWorkspaceByIdResponseTypeDefault = `paid`;
+
+export const GetWorkspaceByIdResponse = zod.object({
+  id: zod.number(),
+  type: zod.enum(["paid", "free"]).default(getWorkspaceByIdResponseTypeDefault),
   brandName: zod.string(),
   websiteUrl: zod.string(),
   competitor1Url: zod.string().nullish(),
@@ -52,6 +78,12 @@ export const GetWorkspaceResponse = zod.object({
 export const getOverviewQueryDateRangeDefault = `7d`;
 
 export const GetOverviewQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getOverviewQueryDateRangeDefault),
@@ -94,6 +126,12 @@ export const GetOverviewResponse = zod.object({
 export const getVisibilityQueryDateRangeDefault = `7d`;
 
 export const GetVisibilityQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getVisibilityQueryDateRangeDefault),
@@ -184,6 +222,12 @@ export const GetVisibilityResponse = zod.object({
 export const getCitationsAnalyticsQueryDateRangeDefault = `7d`;
 
 export const GetCitationsAnalyticsQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getCitationsAnalyticsQueryDateRangeDefault),
@@ -268,6 +312,12 @@ export const GetCitationsAnalyticsResponse = zod.object({
 export const getCommunityQueryDateRangeDefault = `7d`;
 
 export const GetCommunityQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getCommunityQueryDateRangeDefault),
@@ -306,6 +356,12 @@ export const getSentimentQueryDateRangeDefault = `7d`;
 export const getSentimentQuerySentimentFilterDefault = `all`;
 
 export const GetSentimentQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getSentimentQueryDateRangeDefault),
@@ -363,6 +419,12 @@ export const GetSentimentResponse = zod.object({
 export const getOpportunitiesQueryDateRangeDefault = `7d`;
 
 export const GetOpportunitiesQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getOpportunitiesQueryDateRangeDefault),
@@ -412,6 +474,12 @@ export const getPromptsQueryLimitDefault = 50;
 export const getPromptsQueryViewDefault = `prompt`;
 
 export const GetPromptsQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getPromptsQueryDateRangeDefault),
@@ -456,6 +524,12 @@ export const getPagesQueryLimitDefault = 50;
 export const getPagesQueryViewDefault = `page`;
 
 export const GetPagesQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getPagesQueryDateRangeDefault),
@@ -502,6 +576,12 @@ export const getCitationsQueryLimitDefault = 50;
 export const getCitationsQueryViewDefault = `url`;
 
 export const GetCitationsQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
   dateRange: zod
     .enum(["7d", "14d", "30d", "90d"])
     .default(getCitationsQueryDateRangeDefault),
@@ -538,6 +618,15 @@ export const GetCitationsResponse = zod.object({
 /**
  * @summary List saved reports
  */
+export const GetReportsQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
+});
+
 export const GetReportsResponse = zod.object({
   items: zod.array(
     zod.object({
@@ -570,6 +659,15 @@ export const CreateReportBody = zod.object({
 /**
  * @summary Available filter values for dropdowns
  */
+export const GetFilterOptionsQueryParams = zod.object({
+  workspaceId: zod.coerce
+    .number()
+    .optional()
+    .describe(
+      "Workspace ID to scope data. Defaults to the first paid workspace.",
+    ),
+});
+
 export const GetFilterOptionsResponse = zod.object({
   platforms: zod.array(zod.string()),
   topics: zod.array(zod.string()),

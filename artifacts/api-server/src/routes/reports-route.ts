@@ -1,7 +1,9 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { reportsTable, workspacesTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { resolveWorkspaceId } from "./helpers.js";
 
 const router: IRouter = Router();
 
@@ -14,8 +16,14 @@ const ReportBody = z.object({
   recipients: z.string().optional(),
 });
 
-router.get("/reports", async (_req, res) => {
-  const rows = await db.select().from(reportsTable);
+router.get("/reports", async (req, res) => {
+  const wsId = await resolveWorkspaceId(req);
+  const rows = wsId
+    ? await db
+        .select()
+        .from(reportsTable)
+        .where(eq(reportsTable.workspaceId, wsId))
+    : await db.select().from(reportsTable);
   const items = rows.map((r) => ({
     id: r.id,
     name: r.name,
@@ -41,8 +49,8 @@ router.post("/reports", async (req, res) => {
   }
 
   // Get workspace id
-  const ws = await db.select().from(workspacesTable).limit(1);
-  if (ws.length === 0) {
+  const wsId = await resolveWorkspaceId(req);
+  if (!wsId) {
     res
       .status(400)
       .json({ error: "no_workspace", message: "No workspace configured" });
@@ -52,7 +60,7 @@ router.post("/reports", async (req, res) => {
   const [report] = await db
     .insert(reportsTable)
     .values({
-      workspaceId: ws[0].id,
+      workspaceId: wsId,
       name: parsed.data.name,
       dateRange: parsed.data.dateRange,
       schedule: parsed.data.schedule,

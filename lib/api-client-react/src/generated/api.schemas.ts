@@ -19,8 +19,16 @@ export interface WorkspaceSetupInput {
   productCategories?: string;
 }
 
+export type WorkspaceType = (typeof WorkspaceType)[keyof typeof WorkspaceType];
+
+export const WorkspaceType = {
+  paid: "paid",
+  free: "free",
+} as const;
+
 export interface Workspace {
   id: number;
+  type?: WorkspaceType;
   brandName: string;
   websiteUrl: string;
   competitor1Url?: string | null;
@@ -315,6 +323,11 @@ export interface FilterOptions {
   personas: string[];
 }
 
+/**
+ * Workspace ID to scope data. Defaults to the first paid workspace.
+ */
+export type WorkspaceIdParameter = number;
+
 export type DateRangeParameter =
   (typeof DateRangeParameter)[keyof typeof DateRangeParameter];
 
@@ -334,6 +347,10 @@ export type CompetitorParameter = string;
 export type RegionParameter = string;
 
 export type GetOverviewParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   platform?: PlatformParameter;
   topic?: TopicParameter;
@@ -342,6 +359,10 @@ export type GetOverviewParams = {
 };
 
 export type GetVisibilityParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   platform?: PlatformParameter;
   topic?: TopicParameter;
@@ -350,6 +371,10 @@ export type GetVisibilityParams = {
 };
 
 export type GetCitationsAnalyticsParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   platform?: PlatformParameter;
   topic?: TopicParameter;
@@ -358,11 +383,19 @@ export type GetCitationsAnalyticsParams = {
 };
 
 export type GetCommunityParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   region?: RegionParameter;
 };
 
 export type GetSentimentParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   platform?: PlatformParameter;
   topic?: TopicParameter;
@@ -380,6 +413,10 @@ export const GetSentimentSentimentFilter = {
 } as const;
 
 export type GetOpportunitiesParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   platform?: PlatformParameter;
   topic?: TopicParameter;
@@ -387,6 +424,10 @@ export type GetOpportunitiesParams = {
 };
 
 export type GetPromptsParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   platform?: PlatformParameter;
   topic?: TopicParameter;
@@ -407,6 +448,10 @@ export const GetPromptsView = {
 } as const;
 
 export type GetPagesParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   region?: RegionParameter;
   page?: number;
@@ -424,6 +469,10 @@ export const GetPagesView = {
 } as const;
 
 export type GetCitationsParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   platform?: PlatformParameter;
   topic?: TopicParameter;
@@ -442,3 +491,17 @@ export const GetCitationsView = {
   url: "url",
   domain: "domain",
 } as const;
+
+export type GetReportsParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
+};
+
+export type GetFilterOptionsParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
+};

@@ -37,7 +37,11 @@ router.post("/workspace", async (req, res) => {
     productCategories: rawData.productCategories?.trim() || null,
   };
 
-  const existing = await db.select().from(workspacesTable).limit(1);
+  const existing = await db
+    .select()
+    .from(workspacesTable)
+    .where(eq(workspacesTable.type, "paid"))
+    .limit(1);
   let workspace;
 
   if (existing.length > 0) {
@@ -103,7 +107,11 @@ router.post("/workspace", async (req, res) => {
 });
 
 router.get("/workspace", async (_req, res) => {
-  const workspaces = await db.select().from(workspacesTable).limit(1);
+  const workspaces = await db
+    .select()
+    .from(workspacesTable)
+    .where(eq(workspacesTable.type, "paid"))
+    .limit(1);
   if (workspaces.length === 0) {
     res
       .status(404)
@@ -111,6 +119,28 @@ router.get("/workspace", async (_req, res) => {
     return;
   }
   res.json(workspaces[0]);
+});
+
+router.get("/workspace/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  if (!id || id <= 0) {
+    res
+      .status(400)
+      .json({ error: "bad_request", message: "Invalid workspace ID" });
+    return;
+  }
+  const rows = await db
+    .select()
+    .from(workspacesTable)
+    .where(eq(workspacesTable.id, id))
+    .limit(1);
+  if (rows.length === 0) {
+    res
+      .status(404)
+      .json({ error: "not_found", message: "Workspace not found" });
+    return;
+  }
+  res.json(rows[0]);
 });
 
 export default router;

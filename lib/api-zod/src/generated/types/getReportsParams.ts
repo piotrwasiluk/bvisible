@@ -5,15 +5,11 @@
  * bVisible API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { DateRangeParameter } from "./dateRangeParameter";
-import type { RegionParameter } from "./regionParameter";
 import type { WorkspaceIdParameter } from "./workspaceIdParameter";
 
-export type GetCommunityParams = {
+export type GetReportsParams = {
   /**
    * Workspace ID to scope data. Defaults to the first paid workspace.
    */
   workspaceId?: WorkspaceIdParameter;
-  dateRange?: DateRangeParameter;
-  region?: RegionParameter;
 };

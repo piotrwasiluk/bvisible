@@ -272,13 +272,16 @@ export async function runDailyAnalysis(workspaceId?: number): Promise<{
     );
   }
 
-  // Get workspaces
+  // Get workspaces — when running via cron (no explicit ID), only process paid workspaces
   const workspaces = workspaceId
     ? await db
         .select()
         .from(workspacesTable)
         .where(eq(workspacesTable.id, workspaceId))
-    : await db.select().from(workspacesTable);
+    : await db
+        .select()
+        .from(workspacesTable)
+        .where(eq(workspacesTable.type, "paid"));
 
   if (workspaces.length === 0) {
     throw new Error("No workspaces configured");

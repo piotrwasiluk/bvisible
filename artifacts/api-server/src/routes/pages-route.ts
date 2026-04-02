@@ -1,7 +1,8 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { pagesTable } from "@workspace/db";
-import { ilike, sql, asc, desc } from "drizzle-orm";
+import { eq, and, ilike, sql, asc, desc } from "drizzle-orm";
+import { resolveWorkspaceId } from "./helpers.js";
 
 const router: IRouter = Router();
 
@@ -16,12 +17,22 @@ router.get("/pages", async (req, res) => {
   const sortParam = (req.query.sort as string) || "";
   const view = (req.query.view as string) || "page";
 
+  const wsId = await resolveWorkspaceId(req);
+
   const conditions = [];
+  if (wsId) {
+    conditions.push(eq(pagesTable.workspaceId, wsId));
+  }
   if (search) {
     conditions.push(ilike(pagesTable.url, `%${search}%`));
   }
 
-  const whereClause = conditions.length > 0 ? conditions[0] : undefined;
+  const whereClause =
+    conditions.length > 1
+      ? and(...conditions)
+      : conditions.length === 1
+        ? conditions[0]
+        : undefined;
 
   const countResult = await db
     .select({ count: sql<number>`count(*)::int` })

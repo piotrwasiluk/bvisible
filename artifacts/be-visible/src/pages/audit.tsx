@@ -108,7 +108,7 @@ function StepIndicator({ current }: { current: Step }) {
 function StepInput({
   onGenerate,
 }: {
-  onGenerate: (url: string, brand: string) => void;
+  onGenerate: (url: string, brand: string, workspaceId: number) => void;
 }) {
   const [url, setUrl] = useState("");
   const [brand, setBrand] = useState("");
@@ -146,7 +146,7 @@ function StepInput({
       }
 
       const data = await res.json();
-      onGenerate(fullUrl, data.brandName);
+      onGenerate(fullUrl, data.brandName, data.workspaceId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -474,15 +474,16 @@ function StepRunning({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-function StepComplete() {
+function StepComplete({ workspaceId }: { workspaceId: number | null }) {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLocation("/overview");
+      const qs = workspaceId ? `?workspaceId=${workspaceId}` : "";
+      setLocation(`/overview${qs}`);
     }, 3000);
     return () => clearTimeout(timer);
-  }, [setLocation]);
+  }, [setLocation, workspaceId]);
 
   return (
     <motion.div
@@ -522,27 +523,31 @@ export default function AuditPage() {
   const [brandName, setBrandName] = useState("");
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
 
-  const handleGenerated = useCallback(async (url: string, brand: string) => {
-    setBrandName(brand);
+  const handleGenerated = useCallback(
+    async (url: string, brand: string, wsId: number) => {
+      setBrandName(brand);
+      setWorkspaceId(wsId);
 
-    // Fetch the generated prompts from the server
-    try {
-      const res = await fetch("/api/prompts?limit=10");
-      const data = await res.json();
-      if (data.items) {
-        setPrompts(
-          data.items.map((p: { id: number; text: string }) => ({
-            id: p.id,
-            text: p.text,
-          })),
-        );
+      // Fetch the generated prompts from the server
+      try {
+        const res = await fetch(`/api/prompts?limit=10&workspaceId=${wsId}`);
+        const data = await res.json();
+        if (data.items) {
+          setPrompts(
+            data.items.map((p: { id: number; text: string }) => ({
+              id: p.id,
+              text: p.text,
+            })),
+          );
+        }
+      } catch {
+        // Prompts were already saved by generate-prompts, just show what we have
       }
-    } catch {
-      // Prompts were already saved by generate-prompts, just show what we have
-    }
 
-    setStep("prompts");
-  }, []);
+      setStep("prompts");
+    },
+    [],
+  );
 
   const handleRun = useCallback(async () => {
     setStep("running");
@@ -583,7 +588,9 @@ export default function AuditPage() {
           {step === "running" && (
             <StepRunning key="running" onComplete={handleComplete} />
           )}
-          {step === "complete" && <StepComplete key="complete" />}
+          {step === "complete" && (
+            <StepComplete key="complete" workspaceId={workspaceId} />
+          )}
         </AnimatePresence>
       </div>
     </PageShell>

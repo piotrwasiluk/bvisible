@@ -10,8 +10,13 @@ import type { GetPromptsView } from "./getPromptsView";
 import type { PlatformParameter } from "./platformParameter";
 import type { RegionParameter } from "./regionParameter";
 import type { TopicParameter } from "./topicParameter";
+import type { WorkspaceIdParameter } from "./workspaceIdParameter";
 
 export type GetPromptsParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   platform?: PlatformParameter;
   topic?: TopicParameter;

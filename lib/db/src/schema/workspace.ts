@@ -4,6 +4,7 @@ import { z } from "zod/v4";
 
 export const workspacesTable = pgTable("workspaces", {
   id: serial("id").primaryKey(),
+  type: text("type").notNull().default("paid"),
   brandName: text("brand_name").notNull(),
   websiteUrl: text("website_url").notNull(),
   competitor1Url: text("competitor1_url"),

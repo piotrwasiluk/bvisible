@@ -79,6 +79,31 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /workspace/{id}:
+    get:
+      operationId: getWorkspaceById
+      tags: [workspace]
+      summary: Get workspace by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   # ── Analytics ─────────────────────────────────────────────────────────
   /analytics/overview:
     get:
@@ -86,6 +111,7 @@ paths:
       tags: [analytics]
       summary: Overview dashboard data
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/Topic"
@@ -105,6 +131,7 @@ paths:
       tags: [analytics]
       summary: Visibility metrics with time series and leaderboards
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/Topic"
@@ -124,6 +151,7 @@ paths:
       tags: [analytics]
       summary: Citations analytics with charts and tables
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/Topic"
@@ -143,6 +171,7 @@ paths:
       tags: [analytics]
       summary: Community/Reddit analytics
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Region"
       responses:
@@ -159,6 +188,7 @@ paths:
       tags: [analytics]
       summary: Sentiment analysis data
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/Topic"
@@ -183,6 +213,7 @@ paths:
       tags: [analytics]
       summary: Content gap and off-site placement opportunities
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/Topic"
@@ -202,6 +233,7 @@ paths:
       tags: [prompts]
       summary: List tracked prompts with metrics
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/Topic"
@@ -244,6 +276,7 @@ paths:
       tags: [pages]
       summary: List tracked pages with SEO and citation metrics
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Region"
         - name: page
@@ -284,6 +317,7 @@ paths:
       tags: [citations]
       summary: List citation detail records
       parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
         - $ref: "#/components/parameters/DateRange"
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/Topic"
@@ -325,6 +359,8 @@ paths:
       operationId: getReports
       tags: [reports]
       summary: List saved reports
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
       responses:
         "200":
           description: Reports list
@@ -361,6 +397,8 @@ paths:
       operationId: getFilterOptions
       tags: [filters]
       summary: Available filter values for dropdowns
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceId"
       responses:
         "200":
           description: Filter options
@@ -371,6 +409,12 @@ paths:
 
 components:
   parameters:
+    WorkspaceId:
+      name: workspaceId
+      in: query
+      description: Workspace ID to scope data. Defaults to the first paid workspace.
+      schema:
+        type: integer
     DateRange:
       name: dateRange
       in: query
@@ -435,6 +479,10 @@ components:
       properties:
         id:
           type: integer
+        type:
+          type: string
+          enum: [paid, free]
+          default: paid
         brandName:
           type: string
         websiteUrl:

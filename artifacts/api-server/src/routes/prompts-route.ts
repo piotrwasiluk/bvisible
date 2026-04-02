@@ -1,7 +1,8 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { promptsTable, topicsTable, dailyMetricsTable } from "@workspace/db";
-import { eq, ilike, sql, asc, desc } from "drizzle-orm";
+import { eq, and, ilike, sql, asc, desc } from "drizzle-orm";
+import { resolveWorkspaceId } from "./helpers.js";
 
 const router: IRouter = Router();
 
@@ -15,13 +16,23 @@ router.get("/prompts", async (req, res) => {
   const search = (req.query.search as string) || "";
   const sortParam = (req.query.sort as string) || "";
 
+  const wsId = await resolveWorkspaceId(req);
+
   // Build base query
   const conditions = [];
+  if (wsId) {
+    conditions.push(eq(promptsTable.workspaceId, wsId));
+  }
   if (search) {
     conditions.push(ilike(promptsTable.text, `%${search}%`));
   }
 
-  const whereClause = conditions.length > 0 ? conditions[0] : undefined;
+  const whereClause =
+    conditions.length > 1
+      ? and(...conditions)
+      : conditions.length === 1
+        ? conditions[0]
+        : undefined;
 
   // Count total
   const countResult = await db

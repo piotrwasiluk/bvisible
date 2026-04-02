@@ -4,22 +4,24 @@ All endpoints are mounted under `/api`. Defined in `lib/api-spec/openapi.yaml`.
 
 ## Workspace
 
-| Method | Path             | Description                         |
-| ------ | ---------------- | ----------------------------------- |
-| `GET`  | `/api/workspace` | Get current workspace config        |
-| `POST` | `/api/workspace` | Create or update workspace (upsert) |
+| Method | Path                 | Description                                              |
+| ------ | -------------------- | -------------------------------------------------------- |
+| `GET`  | `/api/workspace`     | Get default paid workspace config                        |
+| `GET`  | `/api/workspace/:id` | Get workspace by ID (supports both paid and free)        |
+| `POST` | `/api/workspace`     | Create or update paid workspace (upsert, paid type only) |
 
 ## Analytics
 
-All analytics endpoints accept these query params (global filters):
+All analytics and data endpoints accept these query params (global filters):
 
-| Param        | Type                              | Default | Description             |
-| ------------ | --------------------------------- | ------- | ----------------------- |
-| `dateRange`  | `"7d" \| "14d" \| "30d" \| "90d"` | `"7d"`  | Time period             |
-| `platform`   | string                            | —       | Filter by AI platform   |
-| `topic`      | string                            | —       | Filter by topic cluster |
-| `competitor` | string                            | —       | Filter by competitor    |
-| `region`     | string                            | —       | Filter by region        |
+| Param         | Type                              | Default              | Description                                           |
+| ------------- | --------------------------------- | -------------------- | ----------------------------------------------------- |
+| `workspaceId` | integer                           | first paid workspace | Workspace to scope data to. Required for free audits. |
+| `dateRange`   | `"7d" \| "14d" \| "30d" \| "90d"` | `"7d"`               | Time period                                           |
+| `platform`    | string                            | —                    | Filter by AI platform                                 |
+| `topic`       | string                            | —                    | Filter by topic cluster                               |
+| `competitor`  | string                            | —                    | Filter by competitor                                  |
+| `region`      | string                            | —                    | Filter by region                                      |
 
 | Method | Path                           | Description                                                                                         |
 | ------ | ------------------------------ | --------------------------------------------------------------------------------------------------- |
@@ -63,11 +65,11 @@ Paginated endpoints with sorting and search.
 
 ## Audit (Free Audit Flow)
 
-| Method | Path                          | Description                                                                                                                                       |
-| ------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST` | `/api/audit/generate-prompts` | Takes `{websiteUrl, brandName?}`, generates 10 prompts via Gemini, creates workspace + prompts in DB. Returns `{workspaceId, brandName, prompts}` |
-| `POST` | `/api/audit/run`              | Triggers analysis for a workspace (background). Body: `{workspaceId?}`. Returns `{status: "started"}`                                             |
-| `GET`  | `/api/audit/status`           | Check if audit is running. Returns `{running: boolean}`                                                                                           |
+| Method | Path                          | Description                                                                                                                                                      |
+| ------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/audit/generate-prompts` | Takes `{websiteUrl, brandName?}`, generates 10 prompts via Gemini, creates a **new free workspace** + prompts in DB. Returns `{workspaceId, brandName, prompts}` |
+| `POST` | `/api/audit/run`              | Triggers analysis for a workspace (background). Body: `{workspaceId?}`. Returns `{status: "started"}`                                                            |
+| `GET`  | `/api/audit/status`           | Check if audit is running. Returns `{running: boolean}`                                                                                                          |
 
 ## Analysis
 

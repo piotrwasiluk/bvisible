@@ -45,28 +45,12 @@ router.post("/audit/generate-prompts", async (req, res) => {
     }
   }
 
-  // Create or update workspace
-  const existing = await db.select().from(workspacesTable).limit(1);
-  let workspaceId: number;
-
-  if (existing.length > 0) {
-    const [updated] = await db
-      .update(workspacesTable)
-      .set({
-        brandName,
-        websiteUrl,
-        updatedAt: new Date(),
-      })
-      .where(eq(workspacesTable.id, existing[0].id))
-      .returning();
-    workspaceId = updated.id;
-  } else {
-    const [created] = await db
-      .insert(workspacesTable)
-      .values({ brandName, websiteUrl })
-      .returning();
-    workspaceId = created.id;
-  }
+  // Create a new free workspace for this audit
+  const [created] = await db
+    .insert(workspacesTable)
+    .values({ brandName, websiteUrl, type: "free" })
+    .returning();
+  const workspaceId = created.id;
 
   // Generate prompts via Gemini
   let generatedPrompts: string[] = [];

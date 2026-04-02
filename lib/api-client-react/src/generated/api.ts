@@ -25,10 +25,12 @@ import type {
   GetCitationsAnalyticsParams,
   GetCitationsParams,
   GetCommunityParams,
+  GetFilterOptionsParams,
   GetOpportunitiesParams,
   GetOverviewParams,
   GetPagesParams,
   GetPromptsParams,
+  GetReportsParams,
   GetSentimentParams,
   GetVisibilityParams,
   HealthStatus,
@@ -283,6 +285,93 @@ export function useGetWorkspace<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetWorkspaceQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get workspace by ID
+ */
+export const getGetWorkspaceByIdUrl = (id: number) => {
+  return `/api/workspace/${id}`;
+};
+
+export const getWorkspaceById = async (
+  id: number,
+  options?: RequestInit,
+): Promise<Workspace> => {
+  return customFetch<Workspace>(getGetWorkspaceByIdUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetWorkspaceByIdQueryKey = (id: number) => {
+  return [`/api/workspace/${id}`] as const;
+};
+
+export const getGetWorkspaceByIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkspaceById>>,
+  TError = ErrorType<ErrorResponse>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getWorkspaceById>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetWorkspaceByIdQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getWorkspaceById>>
+  > = ({ signal }) => getWorkspaceById(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkspaceById>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetWorkspaceByIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkspaceById>>
+>;
+export type GetWorkspaceByIdQueryError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Get workspace by ID
+ */
+
+export function useGetWorkspaceById<
+  TData = Awaited<ReturnType<typeof getWorkspaceById>>,
+  TError = ErrorType<ErrorResponse>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getWorkspaceById>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetWorkspaceByIdQueryOptions(id, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;
@@ -1152,41 +1241,57 @@ export function useGetCitations<
 /**
  * @summary List saved reports
  */
-export const getGetReportsUrl = () => {
-  return `/api/reports`;
+export const getGetReportsUrl = (params?: GetReportsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/reports?${stringifiedParams}`
+    : `/api/reports`;
 };
 
 export const getReports = async (
+  params?: GetReportsParams,
   options?: RequestInit,
 ): Promise<ReportsListData> => {
-  return customFetch<ReportsListData>(getGetReportsUrl(), {
+  return customFetch<ReportsListData>(getGetReportsUrl(params), {
     ...options,
     method: "GET",
   });
 };
 
-export const getGetReportsQueryKey = () => {
-  return [`/api/reports`] as const;
+export const getGetReportsQueryKey = (params?: GetReportsParams) => {
+  return [`/api/reports`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetReportsQueryOptions = <
   TData = Awaited<ReturnType<typeof getReports>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof getReports>>,
-    TError,
-    TData
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}) => {
+>(
+  params?: GetReportsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getReports>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetReportsQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getGetReportsQueryKey(params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getReports>>> = ({
     signal,
-  }) => getReports({ signal, ...requestOptions });
+  }) => getReports(params, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getReports>>,
@@ -1207,15 +1312,18 @@ export type GetReportsQueryError = ErrorType<unknown>;
 export function useGetReports<
   TData = Awaited<ReturnType<typeof getReports>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof getReports>>,
-    TError,
-    TData
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getGetReportsQueryOptions(options);
+>(
+  params?: GetReportsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getReports>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetReportsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;
@@ -1313,41 +1421,60 @@ export const useCreateReport = <
 /**
  * @summary Available filter values for dropdowns
  */
-export const getGetFilterOptionsUrl = () => {
-  return `/api/filters/options`;
+export const getGetFilterOptionsUrl = (params?: GetFilterOptionsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/filters/options?${stringifiedParams}`
+    : `/api/filters/options`;
 };
 
 export const getFilterOptions = async (
+  params?: GetFilterOptionsParams,
   options?: RequestInit,
 ): Promise<FilterOptions> => {
-  return customFetch<FilterOptions>(getGetFilterOptionsUrl(), {
+  return customFetch<FilterOptions>(getGetFilterOptionsUrl(params), {
     ...options,
     method: "GET",
   });
 };
 
-export const getGetFilterOptionsQueryKey = () => {
-  return [`/api/filters/options`] as const;
+export const getGetFilterOptionsQueryKey = (
+  params?: GetFilterOptionsParams,
+) => {
+  return [`/api/filters/options`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetFilterOptionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getFilterOptions>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof getFilterOptions>>,
-    TError,
-    TData
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}) => {
+>(
+  params?: GetFilterOptionsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getFilterOptions>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetFilterOptionsQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getGetFilterOptionsQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getFilterOptions>>
-  > = ({ signal }) => getFilterOptions({ signal, ...requestOptions });
+  > = ({ signal }) => getFilterOptions(params, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getFilterOptions>>,
@@ -1368,15 +1495,18 @@ export type GetFilterOptionsQueryError = ErrorType<unknown>;
 export function useGetFilterOptions<
   TData = Awaited<ReturnType<typeof getFilterOptions>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof getFilterOptions>>,
-    TError,
-    TData
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getGetFilterOptionsQueryOptions(options);
+>(
+  params?: GetFilterOptionsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getFilterOptions>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetFilterOptionsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

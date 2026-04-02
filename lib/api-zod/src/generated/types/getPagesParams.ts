@@ -8,8 +8,13 @@
 import type { DateRangeParameter } from "./dateRangeParameter";
 import type { GetPagesView } from "./getPagesView";
 import type { RegionParameter } from "./regionParameter";
+import type { WorkspaceIdParameter } from "./workspaceIdParameter";
 
 export type GetPagesParams = {
+  /**
+   * Workspace ID to scope data. Defaults to the first paid workspace.
+   */
+  workspaceId?: WorkspaceIdParameter;
   dateRange?: DateRangeParameter;
   region?: RegionParameter;
   page?: number;

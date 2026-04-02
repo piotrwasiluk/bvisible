@@ -5,9 +5,11 @@
  * bVisible API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { WorkspaceType } from "./workspaceType";
 
 export interface Workspace {
   id: number;
+  type?: WorkspaceType;
   brandName: string;
   websiteUrl: string;
   competitor1Url?: string | null;
