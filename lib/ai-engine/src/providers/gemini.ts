@@ -25,7 +25,7 @@ export class GeminiAdapter implements ProviderAdapter {
 
   async query(prompt: string): Promise<ProviderResponse> {
     const response = await this.client.models.generateContent({
-      model: "gemini-2.0-flash-lite",
+      model: "gemini-flash-3.1",
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }],

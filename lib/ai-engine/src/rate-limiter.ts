@@ -80,7 +80,6 @@ export function getProviderRateLimit(provider: string): {
     ChatGPT: { rpm: 400, concurrency: 20 },
     Gemini: { rpm: 1500, concurrency: 30 },
     Perplexity: { rpm: 40, concurrency: 5 },
-    Claude: { rpm: 40, concurrency: 5 },
     "Google AI Mode": { rpm: 1500, concurrency: 30 },
   };
 

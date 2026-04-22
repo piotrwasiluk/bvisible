@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-AEO (Answer Engine Optimization) monitoring platform that tracks brand visibility across AI search engines. Built as a pnpm monorepo on Replit.
+AEO (Answer Engine Optimization) monitoring platform that tracks brand visibility across AI search engines. Built as a pnpm monorepo.
 
 ## Tech Stack
 
@@ -92,7 +92,7 @@ pnpm --filter @workspace/scripts run seed      # Populate DB with demo data
 
 - Schema files: `lib/db/src/schema/<model>.ts`
 - Uses `drizzle-zod` for insert schemas
-- Migrations via `drizzle-kit push` (Replit handles production migrations on publish)
+- Migrations via `drizzle-kit push`
 
 ### AI Engine
 
@@ -124,9 +124,6 @@ Never claim something works without running verification. If a verification step
 
 ## Environment
 
-- Hosted on **Replit** — Claude Code runs via shell in the Replit workspace
-- `DATABASE_URL` — automatically provided by Replit (PostgreSQL)
-- `PORT` — API server port
-- Production deployments happen via Replit's "Publish" (handles DB migrations automatically)
-- The dev server binds to `0.0.0.0` (required for Replit's proxy to expose ports)
-- No local Docker, no CI/CD pipelines — Replit handles builds and hosting
+- `DATABASE_URL` — PostgreSQL connection string (required)
+- `PORT` — API server port (required)
+- Dev servers bind to `0.0.0.0`

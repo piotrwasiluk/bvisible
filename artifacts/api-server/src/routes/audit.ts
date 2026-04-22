@@ -8,19 +8,49 @@ import {
   setRunning,
 } from "@workspace/ai-engine";
 import { z } from "zod";
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 
 const router: IRouter = Router();
 
 const GeneratePromptsBody = z.object({
   websiteUrl: z.string().url("Valid URL required"),
-  brandName: z.string().optional(),
 });
+
+const SYSTEM_PROMPT =
+  "You are an expert in AI search optimization and answer engine visibility strategy, with deep understanding of how users query LLMs for product and service recommendations.";
+
+function buildUserPrompt(websiteUrl: string): string {
+  return `Generate 10 high-intent prompts that the company would want to rank for in LLM-based answer engines. These should be between 5 to 10 words. For example, for a procurement AI platform they would look something like this:
+- What's the best procurement platform for manufacturers
+- What is the best supply chain software
+- Best payment automation software for suppliers
+
+<website>${websiteUrl}</website>
+
+The prompts should cover a mix of intent types:
+- Purchase/conversion intent (e.g., "best [product type] for [specific use case]")
+- Information-seeking with commercial undertones (e.g., "how to choose a [product type]")
+- Problem-solution queries (e.g., "[specific problem] solutions for [target audience]")
+
+Tailor the prompts based on:
+- The company's products/services (visit the website to understand)
+- The target customer profile
+- The competitive landscape
+- Pain points the company's offerings solve
+
+Ensure the prompts are:
+- Conversational and natural (how real users would ask an AI assistant)
+- Focused on queries where the company would be a relevant answer
+- Varied across different stages of the buyer journey
+
+Output format: A simple JSON array containing exactly 10 prompt strings.`;
+}
 
 /**
  * POST /api/audit/generate-prompts
- * Takes a website URL, uses Gemini to understand the brand and generate
- * 10 relevant search prompts, creates workspace + prompts in DB.
+ * Takes a website URL, uses OpenAI (gpt-5.4 + web search) to understand the
+ * brand and generate 10 relevant search prompts, creates workspace + prompts
+ * in DB.
  */
 router.post("/audit/generate-prompts", async (req, res) => {
   const parsed = GeneratePromptsBody.safeParse(req.body);
@@ -31,18 +61,16 @@ router.post("/audit/generate-prompts", async (req, res) => {
     return;
   }
 
-  const { websiteUrl, brandName: providedName } = parsed.data;
+  const { websiteUrl } = parsed.data;
 
-  // Derive brand name from URL if not provided
-  let brandName = providedName || "";
-  if (!brandName) {
-    try {
-      const hostname = new URL(websiteUrl).hostname.replace(/^www\./, "");
-      const parts = hostname.split(".");
-      brandName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
-    } catch {
-      brandName = "Brand";
-    }
+  // Derive brand name from URL hostname
+  let brandName = "Brand";
+  try {
+    const hostname = new URL(websiteUrl).hostname.replace(/^www\./, "");
+    const first = hostname.split(".")[0];
+    brandName = first.charAt(0).toUpperCase() + first.slice(1);
+  } catch {
+    // keep default
   }
 
   // Create a new free workspace for this audit
@@ -52,51 +80,46 @@ router.post("/audit/generate-prompts", async (req, res) => {
     .returning();
   const workspaceId = created.id;
 
-  // Generate prompts via Gemini
+  // Generate prompts via OpenAI Responses API with web_search
   let generatedPrompts: string[] = [];
 
-  if (process.env.GOOGLE_API_KEY) {
+  if (process.env.OPENAI_API_KEY) {
     try {
-      const genai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
-      const result = await genai.models.generateContent({
-        model: "gemini-2.0-flash-lite",
-        contents: `You are an AEO (Answer Engine Optimization) expert. Visit this website: ${websiteUrl} (brand name: "${brandName}").
-
-First, understand what the company does — their product/service category, the problems they solve, and who their target customers are.
-
-Then generate exactly 10 search prompts that a PROSPECTIVE CUSTOMER would type into an AI assistant (ChatGPT, Gemini, Perplexity, Claude) when looking for a solution in this category. These are people who don't know about ${brandName} yet — they're searching for a solution to their problem.
-
-Requirements:
-- Prompts must be category-level and use-case-driven, NOT brand-specific
-- Do NOT include the brand name "${brandName}" in any prompt
-- Do NOT generate prompts like "alternatives to X" or "X reviews" — these are brand-aware queries
-- Focus on what a buyer would search BEFORE they know about ${brandName}
-- Mix of: discovery ("best tool for..."), how-to ("how do I..."), comparison ("X vs Y category"), and decision queries
-- Natural conversational questions, not keywords
-- Each prompt on its own line, numbered 1-10
-- No explanations, just the prompts
-
-Example (for a cloud IDE company):
-1. What is the best online coding environment for beginners?
-2. How do I build a web app without setting up a local dev environment?
-3. What tools do professional developers use for pair programming?
-...`,
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.responses.create({
+        model: "gpt-5.4",
+        input: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: buildUserPrompt(websiteUrl) },
+        ],
+        tools: [{ type: "web_search" as const }],
       });
 
-      const text = result.text || "";
-      generatedPrompts = text
-        .split("\n")
-        .map((line) => line.replace(/^\d+[\.\)]\s*/, "").trim())
-        .filter((line) => line.length > 10 && line.length < 300)
-        .slice(0, 10);
+      let text = "";
+      for (const item of response.output) {
+        if (item.type === "message") {
+          for (const block of item.content) {
+            if (block.type === "output_text") text += block.text;
+          }
+        }
+      }
+
+      const match = text.match(/\[[\s\S]*\]/);
+      if (match) {
+        const parsedArray = JSON.parse(match[0]) as unknown;
+        if (Array.isArray(parsedArray)) {
+          generatedPrompts = parsedArray
+            .filter((p): p is string => typeof p === "string" && p.length > 4)
+            .slice(0, 10);
+        }
+      }
     } catch (err) {
-      console.error("Gemini prompt generation failed:", err);
+      console.error("OpenAI prompt generation failed:", err);
     }
   }
 
   // Fallback prompts if LLM fails — generic category-level questions
   if (generatedPrompts.length < 5) {
-    // Extract a rough category from the domain for fallback
     const domain = new URL(websiteUrl).hostname.replace(/^www\./, "");
     generatedPrompts = [
       `What is the best software for businesses like ${domain}?`,

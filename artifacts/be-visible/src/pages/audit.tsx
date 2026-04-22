@@ -29,8 +29,7 @@ const PLATFORMS = [
   { name: "OpenAI", color: "#10a37f", delay: 0 },
   { name: "Gemini", color: "#4285f4", delay: 1.5 },
   { name: "Perplexity", color: "#20808d", delay: 3 },
-  { name: "Claude", color: "#d97706", delay: 4.5 },
-  { name: "Google AI Mode", color: "#ea4335", delay: 6 },
+  { name: "Google AI Mode", color: "#ea4335", delay: 4.5 },
 ];
 
 function PageShell({ children }: { children: React.ReactNode }) {
@@ -111,7 +110,6 @@ function StepInput({
   onGenerate: (url: string, brand: string, workspaceId: number) => void;
 }) {
   const [url, setUrl] = useState("");
-  const [brand, setBrand] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -134,10 +132,7 @@ function StepInput({
       const res = await fetch("/api/audit/generate-prompts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          websiteUrl: fullUrl,
-          brandName: brand || undefined,
-        }),
+        body: JSON.stringify({ websiteUrl: fullUrl }),
       });
 
       if (!res.ok) {
@@ -171,7 +166,7 @@ function StepInput({
         </h1>
         <p className="text-neutral-500 text-lg">
           Enter your website and we'll analyze how AI models see your brand
-          across 5 platforms.
+          across 4 AI search engines.
         </p>
       </div>
 
@@ -188,16 +183,6 @@ function StepInput({
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             />
           </div>
-        </div>
-
-        <div>
-          <input
-            type="text"
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-            placeholder="Brand name (optional — we'll detect it)"
-            className="w-full px-4 py-3 text-sm border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F0F10]/10 focus:border-neutral-400 transition-all"
-          />
         </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}

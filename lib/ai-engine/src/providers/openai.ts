@@ -25,7 +25,7 @@ export class OpenAIAdapter implements ProviderAdapter {
 
   async query(prompt: string): Promise<ProviderResponse> {
     const response = await this.client.responses.create({
-      model: "gpt-4o-mini",
+      model: "gpt-5.4-mini",
       input: prompt,
       tools: [{ type: "web_search_preview" as const }],
     });
