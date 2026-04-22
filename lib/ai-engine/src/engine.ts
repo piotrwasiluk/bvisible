@@ -17,7 +17,6 @@ import { RateLimiter, getProviderRateLimit } from "./rate-limiter.js";
 import { OpenAIAdapter } from "./providers/openai.js";
 import { GeminiAdapter } from "./providers/gemini.js";
 import { PerplexityAdapter } from "./providers/perplexity.js";
-import { ClaudeAdapter } from "./providers/claude.js";
 import { DataForSEOAdapter } from "./providers/dataforseo.js";
 
 function extractDomain(url: string): string {
@@ -35,7 +34,6 @@ function getAvailableAdapters(): ProviderAdapter[] {
     new OpenAIAdapter(),
     new GeminiAdapter(),
     new PerplexityAdapter(),
-    new ClaudeAdapter(),
     new DataForSEOAdapter(),
   ];
   return all.filter((a) => a.isAvailable());
@@ -246,9 +244,9 @@ async function runWorkspaceAnalysis(
  * - Within each provider, prompts are concurrent up to the RPM/concurrency limit
  * - Workspaces are processed in batches to avoid memory pressure
  *
- * For 100 workspaces × 50 prompts × 5 providers:
- * - Total API calls: 25,000
- * - Wall clock (all providers parallel): ~100 min (bottleneck: Perplexity/Claude at 50 RPM)
+ * For 100 workspaces × 50 prompts × 4 providers:
+ * - Total API calls: 20,000
+ * - Wall clock (all providers parallel): ~100 min (bottleneck: Perplexity at 40 RPM)
  * - Higher API tiers reduce this significantly
  */
 export async function runDailyAnalysis(workspaceId?: number): Promise<{
